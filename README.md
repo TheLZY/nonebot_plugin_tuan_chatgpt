@@ -12,7 +12,7 @@ _✨ NoneBot 插件简单描述 ✨_
 
 
 <a href="https://cdn.jsdelivr.net/gh/TheLZY/nonebot-plugin-tuan-chatgpt@master/LICENSE.md">
-    <img src="https://img.shields.io/github/license/owner/nonebot-plugin-tuan-chatgpt.svg" alt="license">
+    <img src="https://img.shields.io/github/license/TheLZY/nonebot-plugin-tuan-chatgpt.svg" alt="license">
 </a>
 <a href="https://pypi.python.org/pypi/nonebot-plugin-example">
     <img src="https://img.shields.io/pypi/v/nonebot-plugin-tuan-chatgpt.svg" alt="pypi">
