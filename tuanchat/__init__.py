@@ -89,7 +89,7 @@ async def main_chat(event: MessageEvent):
 
     if isinstance(event, GroupMessageEvent):
         freq_limiter.start(f'chat-group{event.group_id}', config.user_freq_lim)
-        freq_limiter.start(f'chat-group{event.group_id}-{event.user_id}', config.gropu_freq_lim)
+        freq_limiter.start(f'chat-group{event.group_id}-{event.user_id}', config.group_freq_lim)
 
     # TODO：
     # 为了避免被腾讯风控，这里也应该增加一些长度分隔什么的
