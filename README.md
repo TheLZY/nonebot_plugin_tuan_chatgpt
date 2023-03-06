@@ -91,7 +91,7 @@ chatgpt_api=""
 
 ### 效果图
 
-[聊天效果](example.png)
+![聊天效果](example.png)
 
 ## 💡 TODO
 
