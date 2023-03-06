@@ -8,7 +8,7 @@
 
 # nonebot-plugin-tuan-chatgpt
 
-_✨ NoneBot 插件简单描述 ✨_
+_✨ 来和团子一起聊天吧~ ✨_
 
 
 <a href="https://cdn.jsdelivr.net/gh/TheLZY/nonebot-plugin-tuan-chatgpt@master/LICENSE.md">
@@ -29,7 +29,7 @@ _✨ NoneBot 插件简单描述 ✨_
 
 基于 openai 于3月1日放开的最新模型 gpt-3.5-turbo-0301 开发，能够实现近乎于网页端的体验。
 
-基于onebot v11开发，已作为在Paimon bot插件测试。
+基于onebot v11开发，已作为插件在Paimon bot测试。
 
 功能：
 
