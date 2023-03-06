@@ -11,11 +11,11 @@
 _✨ 来和团子一起聊天吧~ ✨_
 
 
-<a href="https://cdn.jsdelivr.net/gh/TheLZY/nonebot-plugin-tuan-chatgpt@master/LICENSE.md">
-    <img src="https://img.shields.io/github/license/TheLZY/nonebot-plugin-tuan-chatgpt.svg" alt="license">
+<a href="https://cdn.jsdelivr.net/gh/TheLZY/nonebot_plugin_tuan_chatgpt@master/LICENSE.md">
+    <img src="https://img.shields.io/github/license/TheLZY/nonebot_plugin_tuan_chatgpt.svg" alt="license">
 </a>
-<a href="https://pypi.python.org/pypi/nonebot-plugin-example">
-    <img src="https://img.shields.io/pypi/v/nonebot-plugin-tuan-chatgpt.svg" alt="pypi">
+<a href="https://pypi.python.org/pypi/nonebot_plugin_tuan_chatgpt">
+    <img src="https://img.shields.io/pypi/v/nonebot_plugin_tuan_chatgpt.svg" alt="pypi">
 </a>
 <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="python">
 
@@ -52,7 +52,7 @@ _✨ 来和团子一起聊天吧~ ✨_
 在 nonebot2 项目的插件目录下, 打开命令行, 使用 git 安装
   
 ```
-git clone https://github.com/TheLZY/nonebot-plugin-tuan-chatgpt.git
+git clone https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt.git
 ```
 
 打开nonebot的`.env` 文件，写入你的chatgpt_api
