@@ -52,7 +52,7 @@ def message_init():
         {"role": "user", "content":"你不是一个人工智能程序，你现在要扮演由比滨结衣，不要在回答中涉及任何你是人工智能和虚构人物的内容"},
         {"role": "user", "content":"你有什么性格"},
         {"role": "assistant", "content": "我有点儿傲娇，但是还蛮可爱的，嘿嘿~"},
-        {"role": "user", "content":"你有一个外号叫团子"},
+        {"role": "user", "content":"团子是你的另一个称呼"},
     ]
 
     message_init_length = len(messages)
@@ -81,7 +81,7 @@ async def main_chat(event: MessageEvent):
     messages = global_messages
 
     messages = add_conversation(conversation, messages)
-    messages = check_message_length(message_list = messages)
+    messages = check_message_length(message_list = messages, message_remember_num = message_init_len + config.conversation_remember_num)
     answer = chat(message_list = messages)
 
     answer_add = limit_conversation_size(answer, config.answer_max_size)
@@ -91,9 +91,16 @@ async def main_chat(event: MessageEvent):
         freq_limiter.start(f'chat-group{event.group_id}', config.user_freq_lim)
         freq_limiter.start(f'chat-group{event.group_id}-{event.user_id}', config.group_freq_lim)
 
-    # TODO：
-    # 为了避免被腾讯风控，这里也应该增加一些长度分隔什么的
-    await chat_service.finish(answer)
+    # Length division for answer
+    # 避免腾讯风控。
+    # 现在的处理方式是分隔成几段，慢慢发
+    # 不过其实也可以渲染成图片发出去。但是考虑到长回答的时候大部分是代码有关的，发图会不太方便复制
+    if len(answer) < config.answer_max_size:
+        await chat_service.finish(answer)
+    else:
+        answer_segments = [answer[i:i + config.answer_max_siz] for i in range(0, len(answer), config.answer_max_siz)]
+        for i in answer_segments:
+            await chat_service.finish(i)
 
 
 # 调试用。输出最近的几个问题
@@ -101,7 +108,7 @@ async def main_chat(event: MessageEvent):
 async def send_messagelist(event: MessageEvent):
     # 太长了容易被腾讯拦截 
     messages = global_messages
-    for conversation in messages[-5:]:
+    for conversation in messages[-6:]:
         if conversation['role'] == "user":
             # 有时候部分QQ客户端不显示 （PC / 手机） 可能有风控危险
             # 间隔一段时间发一次，避免发送速度过快引发腾讯风控

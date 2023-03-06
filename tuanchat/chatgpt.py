@@ -40,14 +40,13 @@ def limit_conversation_size(conversation: str, conversaton_max_size: int) -> str
         return conversation
 
 
-def check_message_length(message_list) -> list :
-    while num_tokens_from_messages(message_list) > 2000 or len(message_list) > 14:   # tiaojiao have 7 items. So it can remember 7 other conversations.
+def check_message_length(message_list, message_remember_num) -> list :
+    while num_tokens_from_messages(message_list) > 2000 or len(message_list) > message_remember_num:   # tiaojiao have 7 items. So it can remember 7 other conversations.
         try:
             message_list.pop(7)
         except Exception as e:
             print(e)
     return message_list
-        # messages
 
 # In fact there should be no need to use asynchronous. No other Coroutines is needed inside this response.
 def chat(message_list):

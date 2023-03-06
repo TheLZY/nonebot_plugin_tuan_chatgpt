@@ -41,6 +41,13 @@ _✨ 来和团子一起聊天吧~ ✨_
 
 由于本人能力精力有限，对于潜在的问题 & 能提升的地方，欢迎来提 issue & pull request。
 
+效果：
+
+![聊天效果](example2.png)
+
+
+
+
 ## 💿 安装
 
 还没上传pypi以及NoneBot2商店（不调好不发布 by 卢总.jpg）
@@ -50,22 +57,23 @@ _✨ 来和团子一起聊天吧~ ✨_
 <details>
 <summary>使用git安装</summary>
 在 nonebot2 项目的插件目录下, 打开命令行, 使用 git 安装
-  
+
 ```
 git clone https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt.git
 ```
 
 打开nonebot的`.env` 文件，写入你的chatgpt_api
-  
+
 ```
 chatgpt_api=""
 ```
-  
+
 如果没有自动导入插件的功能，需要打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
 
     plugins = ["nonebot_plugin_tuan_chatgpt"]
 
 </details>
+
 
 ## ⚙️ 配置
 
@@ -79,6 +87,9 @@ chatgpt_api=""
 | answer_split_size | 否 | 177 | 分隔回答长度 |
 | user_freq_lim | 否 | 4 | 限制群友发言速度 |
 | group_freq_lim | 否 | 6 | 限制群内发言速度 |
+| conversation_remember_num | 否 | 14 | 能记住的对话数目 |
+
+
 
 ## 🎉 使用
 
@@ -87,21 +98,22 @@ chatgpt_api=""
 | 指令 | 权限 | 需要@ | 范围 | 说明 |
 |:-----:|:----:|:----:|:----:|:----:|
 | 团子[聊天内容] | 群员 | 否 | 群聊 | 来和团子聊天吧！ |
-| 历史记录 | 主人 | 否 | 群聊 / 私聊 | 查看4条最近问题 |
+| 历史记录 | 主人 | 否 | 群聊 / 私聊 | 查看3条最近问题 |
 
-### 效果图
+<!--### 效果图 -->
 
-![聊天效果](example.png)
+
 
 ## 💡 TODO
 
-- [ ] 回答分隔 （正在思考怎么弄比较方便。图片/分段？）
+- [√] 回答分隔 （通过分段实现。可能会考虑换成图片发送）
 
 - [ ] 未对私聊做发言频率限制。可能以后会添加？
 
 - [ ] 支持使用梯子？
 
 - [ ] 错误处理？
+
 
 角色~~调教~~定制：
 
@@ -121,9 +133,10 @@ chatgpt_api=""
 不过按理来说也不是不行，只需要把priority调低就行
 
 
+
 ## ⭐ Special thanks to
 
-本项目在开发过程中，参考了不少以下项目，对大家表示由衷的感谢
+本项目在开发过程中，参考了不少以下项目，对各位表示由衷的感谢
 
 openai
 
