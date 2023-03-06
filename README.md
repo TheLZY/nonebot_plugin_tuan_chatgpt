@@ -21,54 +21,49 @@ _✨ NoneBot 插件简单描述 ✨_
 
 </div>
 
-这是一个 nonebot2 插件项目的模板库, 你可以直接使用本模板创建你的 nonebot2 插件项目的仓库
 
-模板库使用方法:
-1. 点击仓库中的 "Use this template" 按钮, 输入仓库名与描述, 点击 "  Create repository from template" 创建仓库
-2. 在创建好的新仓库中, 在 "Add file" 菜单中选择 "Create new file", 在新文件名处输入`LICENSE`, 此时在右侧会出现一个 "Choose a license template" 按钮, 点击此按钮选择开源协议模板, 然后在最下方提交新文件到主分支
-3. 全局替换`owner`为仓库所有者ID; 全局替换`nonebot-plugin-example`为插件名; 全局替换`nonebot_plugin_example`为包名; 修改 python 徽标中的版本为你插件的运行所需版本
-4. 修改 README 中的插件名和插件描述, 并在下方填充相应的内容
 
 ## 📖 介绍
 
-这里是插件的详细介绍部分
+来与团子聊天吧！
+
+基于 openai 于3月1日放开的最新模型 gpt-3.5-turbo-0301 开发，能够实现近乎于网页端的体验。
+
+基于onebot v11开发，已作为在Paimon bot插件测试。
+
+功能：
+
+- 角色扮演聊天 Powered by Chatgpt（可以 ~~调教~~ 修改成其他人设）
+- 发言频率限制
+- 发言长度限制 （不仅避免腾讯检测 还能省 token）
+- 记忆限制（最多记忆7条对话 ~~防止被群友调教成猫娘~~）
+- 查看历史问题（~~看看群友都发了什么怪东西~~）
+
+由于本人能力精力有限，对于潜在的问题 & 能提升的地方，欢迎来提 issue & pull request。
 
 ## 💿 安装
 
-<details>
-<summary>使用 nb-cli 安装</summary>
-在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+还没上传pypi以及NoneBot2商店（不调好不发布 by 卢总.jpg）
 
-    nb plugin install nonebot-plugin-example
+先用git吧
+
+<details>
+<summary>使用git安装</summary>
+在 nonebot2 项目的插件目录下, 打开命令行, 使用 git 安装
+
+<details>
+<summary>git</summary>
+
+
+    git clone https://github.com/TheLZY/nonebot-plugin-tuan-chatgpt.git
 
 </details>
 
-<details>
-<summary>使用包管理器安装</summary>
-在 nonebot2 项目的插件目录下, 打开命令行, 根据你使用的包管理器, 输入相应的安装命令
-
-<details>
-<summary>pip</summary>
-
-    pip install nonebot-plugin-example
-</details>
-<details>
-<summary>pdm</summary>
-
-    pdm add nonebot-plugin-example
-</details>
-<details>
-<summary>poetry</summary>
-
-    poetry add nonebot-plugin-example
-</details>
-<details>
-<summary>conda</summary>
-
-    conda install nonebot-plugin-example
-</details>
-
-打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
+打开nonebot的`.env` 文件，写入你的chatgpt_api
+```
+chatgpt_api=""
+```
+如果没有自动导入插件的功能，需要打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
 
     plugins = ["nonebot_plugin_example"]
 
@@ -80,14 +75,65 @@ _✨ NoneBot 插件简单描述 ✨_
 
 | 配置项 | 必填 | 默认值 | 说明 |
 |:-----:|:----:|:----:|:----:|
-| 配置项1 | 是 | 无 | 配置说明 |
-| 配置项2 | 否 | 无 | 配置说明 |
+| chatgpt_api | 是 | 无 | str格式 |
+| conversation_max_size | 否 | 50 | 最大发送问题字数 |
+| answer_max_size | 否 | 30 | 最大记录回答字数 |
+| answer_split_size | 否 | 177 | 分隔回答长度 |
+| user_freq_lim | 否 | 4 | 限制群友发言速度 |
+| group_freq_lim | 否 | 6 | 限制群内发言速度 |
 
 ## 🎉 使用
+
 ### 指令表
+
 | 指令 | 权限 | 需要@ | 范围 | 说明 |
 |:-----:|:----:|:----:|:----:|:----:|
-| 指令1 | 主人 | 否 | 私聊 | 指令说明 |
-| 指令2 | 群员 | 是 | 群聊 | 指令说明 |
+| 团子[聊天内容] | 群员 | 否 | 群聊 | 来和团子聊天吧！ |
+| 历史记录 | 主人 | 否 | 群聊 / 私聊 | 查看4条最近问题 |
+
 ### 效果图
-如果有效果图的话
+
+[聊天效果](example.png)
+
+## 💡 TODO
+
+[] 回答分隔 （正在思考怎么弄比较方便）
+[] 未对私聊做发言频率限制。可能以后会添加？
+[] 使用梯子？
+[] 错误处理？
+
+角色~~调教~~定制：
+
+如果希望更改触发语，可以修改 `service = on_startswith('团子', priority = 8, block=True)`
+
+如果希望更改人设，可以修改 `message_init()`
+
+### 一些碎碎念
+
+其实也可以是收到at，然后没有别的程序被触发的时候就回复。因为paimon bot似乎会自动将nickname转义为at ？
+但是并不是所有的都会。
+
+然而如果写两遍又有点......
+
+而且有可能会在写错命令的时候误运行
+
+不过按理来说也不是不行，只需要把priority调低就行
+
+
+## ⭐ Special thanks to
+
+本项目在开发过程中，参考了不少以下项目，对大家表示由衷的感谢
+
+openai
+
+[ChatGPT 中文调教指南]( https://github.com/PlexPt/awesome-chatgpt-prompts-zh) by @[PlexPt](https://github.com/PlexPt/PlexPt)
+
+[NoneBot](https://github.com/nonebot)
+
+[小派蒙|LittlePaimon](https://github.com/CMHopeSunshine/LittlePaimon) by @[CMHopeSunshine](https://github.com/CMHopeSunshine/CMHopeSunshine)
+
+[nonebot-plugin-chatgpt](https://github.com/A-kirami/nonebot-plugin-chatgpt) by @[A-kirami](https://github.com/A-kirami/A-kirami)
+
+[nonebot-plugin-oachat](https://github.com/Gin2O/nonebot_plugin_oachat) by @[Gin2O](https://github.com/Gin2O)
+
+[Little Paimon with chatgpt](https://github.com/meatjam/LittlePaimon) by @[meatjam](https://github.com/meatjam)
