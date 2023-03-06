@@ -50,22 +50,20 @@ _✨ NoneBot 插件简单描述 ✨_
 <details>
 <summary>使用git安装</summary>
 在 nonebot2 项目的插件目录下, 打开命令行, 使用 git 安装
-
-<details>
-<summary>git</summary>
-
-
-    git clone https://github.com/TheLZY/nonebot-plugin-tuan-chatgpt.git
-
-</details>
+  
+```
+git clone https://github.com/TheLZY/nonebot-plugin-tuan-chatgpt.git
+```
 
 打开nonebot的`.env` 文件，写入你的chatgpt_api
+  
 ```
 chatgpt_api=""
 ```
+  
 如果没有自动导入插件的功能，需要打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
 
-    plugins = ["nonebot_plugin_example"]
+    plugins = ["nonebot_plugin_tuan_chatgpt"]
 
 </details>
 
