@@ -97,7 +97,9 @@ async def main_chat(event: MessageEvent):
     else:
         answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
         for i in answer_segments:
+            # Use sleep to avoid Tencent risk management
             await chat_service.send(i)
+            await asyncio.sleep(1)
 
 
 # 调试用。输出最近的几个问题
