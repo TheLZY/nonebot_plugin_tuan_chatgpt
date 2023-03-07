@@ -33,9 +33,6 @@ chat_service_history = on_command("历史记录", permission=SUPERUSER)
 
 openai.api_key = config.chatgpt_api
 
-# TODO：
-answer_split_size = config.answer_split_size
-
 # 调教
 # ref: https://github.com/PlexPt/awesome-chatgpt-prompts-zh
 
@@ -95,10 +92,10 @@ async def main_chat(event: MessageEvent):
     # 避免腾讯风控。
     # 现在的处理方式是分隔成几段，慢慢发
     # 不过其实也可以渲染成图片发出去。但是考虑到长回答的时候大部分是代码有关的，发图会不太方便复制
-    if len(answer) < config.answer_max_size:
+    if len(answer) < config.answer_split_size:
         await chat_service.finish(answer)
     else:
-        answer_segments = [answer[i:i + config.answer_max_siz] for i in range(0, len(answer), config.answer_max_siz)]
+        answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
         for i in answer_segments:
             await chat_service.finish(i)
 
