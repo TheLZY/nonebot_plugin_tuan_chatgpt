@@ -97,7 +97,7 @@ async def main_chat(event: MessageEvent):
     else:
         answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
         for i in answer_segments:
-            await chat_service.finish(i)
+            await chat_service.send(i)
 
 
 # 调试用。输出最近的几个问题
