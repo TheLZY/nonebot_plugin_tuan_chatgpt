@@ -1,7 +1,7 @@
 <div align="center">
-  <a href="https://v2.nonebot.dev/store"><img src="https://github.com/A-kirami/nonebot-plugin-template/blob/resources/nbp_logo.png" width="180" height="180" alt="NoneBotPluginLogo"></a>
+  <a href="https://v2.nonebot.dev/store"><img src="https://raw.githubusercontent.com/A-kirami/nonebot-plugin-template/resources/nbp_logo.png" width="180" height="180" alt="NoneBotPluginLogo"></a>
   <br>
-  <p><img src="https://github.com/A-kirami/nonebot-plugin-template/blob/resources/NoneBotPlugin.svg" width="240" alt="NoneBotPluginText"></p>
+  <p><img src="https://raw.githubusercontent.com/A-kirami/nonebot-plugin-template/resources/NoneBotPlugin.svg" width="240" alt="NoneBotPluginText"></p>
 </div>
 
 <div align="center">
@@ -47,12 +47,7 @@ _✨ 来和团子一起聊天吧~ ✨_
 
 
 
-
 ## 💿 安装
-
-还没上传pypi以及NoneBot2商店（不调好不发布 by 卢总.jpg）
-
-先用git吧
 
 <details>
 <summary>使用git安装</summary>
@@ -61,6 +56,20 @@ _✨ 来和团子一起聊天吧~ ✨_
 ```
 git clone https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt.git
 ```
+
+</details>
+
+<details>
+<summary>使用pip安装</summary>
+
+```
+pip install nonebot-plugin-tuan-chatgpt
+```
+
+</details>
+
+
+环境配置：
 
 打开nonebot的`.env` 文件，写入你的chatgpt_api
 
@@ -72,7 +81,7 @@ chatgpt_api=""
 
     plugins = ["nonebot_plugin_tuan_chatgpt"]
 
-</details>
+
 
 
 ## ⚙️ 配置
@@ -85,8 +94,8 @@ chatgpt_api=""
 | conversation_max_size | 否 | 50 | 最大发送问题字数 |
 | answer_max_size | 否 | 30 | 最大记录回答字数 |
 | answer_split_size | 否 | 177 | 分隔回答长度 |
-| user_freq_lim | 否 | 4 | 限制群友发言速度 |
-| group_freq_lim | 否 | 6 | 限制群内发言速度 |
+| user_freq_lim | 否 | 4 | 限制群友发言速度（秒） |
+| group_freq_lim | 否 | 6 | 限制群内发言速度（秒）|
 | conversation_remember_num | 否 | 14 | 能记住的对话数目 |
 
 
@@ -111,9 +120,14 @@ chatgpt_api=""
 - [ ] 支持使用梯子？
 - [ ] 错误处理？
 - [ ] api 异步调用优化 （ 自动重试 / 报错）
+- [ ] 人格转换功能？
+- [ ] 通过@触发 ？ 
 
 
-角色~~调教~~定制：
+
+**角色~~调教~~定制：**
+
+pip下载时可用
 
 如果希望更改触发语，可以修改 `service = on_startswith('团子', priority = 8, block=True)`
 
@@ -121,12 +135,16 @@ chatgpt_api=""
 
 ### 一些碎碎念
 
-其实也可以是收到at，然后没有别的程序被触发的时候就回复。因为paimon bot似乎会自动将nickname转义为at ？
-但是并不是所有的都会。
+其实也可以是收到 @ ，然后没有别的程序被触发的时候就回复。因为paimon bot似乎会自动将nickname转义为 @ ？
 
-然而如果写两遍又有点......
+<!-- 虽然这样对于一些有转移功能的bot来说比较方便，两种触发方式都能回答
+但是有一个问题 别人叫你团子爹怎么怎么的时候，她收到的可能就是爹怎么怎么。。。 -->
+
+但是并不是所有的都会。
+要适配所有bot的话可能写两遍是最合理的。。。
 
 而且有可能会在写错命令的时候误运行
+
 
 不过按理来说也不是不行，只需要把priority调低就行
 
