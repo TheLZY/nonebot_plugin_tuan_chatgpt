@@ -51,6 +51,8 @@ _✨ 来和团子一起聊天吧~ ✨_
 
 <details>
 <summary>使用git安装</summary>
+
+
 在 nonebot2 项目的插件目录下, 打开命令行, 使用 git 安装
 
 ```
@@ -62,6 +64,7 @@ git clone https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt.git
 <details>
 <summary>使用pip安装</summary>
 
+
 ```
 pip install nonebot-plugin-tuan-chatgpt
 ```
@@ -71,7 +74,7 @@ pip install nonebot-plugin-tuan-chatgpt
 
 环境配置：
 
-打开nonebot的`.env` 文件，写入你的chatgpt_api
+打开nonebot的`.env` 文件，写入您的chatgpt_api
 
 ```
 chatgpt_api=""
@@ -115,7 +118,7 @@ chatgpt_api=""
 
 ## 💡 TODO
 
-- [√] 回答分隔 （通过分段实现。可能会考虑换成图片发送）
+- [x] 回答分隔 （通过分段实现。可能会考虑换成图片发送）
 - [ ] 未对私聊做发言频率限制。可能以后会添加？
 - [ ] 支持使用梯子？
 - [ ] 错误处理？
@@ -125,7 +128,7 @@ chatgpt_api=""
 
 
 
-**角色~~调教~~定制：**
+**角色 ~~调教~~ 定制：**
 
 pip下载时可用
 
