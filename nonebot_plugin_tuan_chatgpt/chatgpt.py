@@ -1,6 +1,8 @@
 import tiktoken
 import openai
 
+import asyncio
+
 # Freq limiter
 from collections import defaultdict
 import time
@@ -49,16 +51,17 @@ def check_message_length(message_list, message_remember_num) -> list :
     return message_list
 
 # In fact there should be no need to use asynchronous. No other Coroutines is needed inside this response.
-def chat(message_list):
+async def chat(message_list):
     try:
-        response = openai.ChatCompletion.create(
+        response = await openai.ChatCompletion.create(
         model = "gpt-3.5-turbo",
         messages = message_list,
         # temperature = 0.5,
         presence_penalty = -1.4
         )
         answer = response['choices'][0]['message']['content'].strip()
-        if len(answer) != 0:  #避免返回空白
+        
+        if len(answer) != 0:  # Avoid blank answer.
             return answer
         else:
             raise Exception
