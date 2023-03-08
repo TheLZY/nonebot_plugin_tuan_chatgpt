@@ -3,7 +3,7 @@ name = "nonebot-plugin-tuan-chatgpt"
 version = "0.1.0"
 description = "\"Chat with tuanzi ~\""
 authors = ["TheLZY"]
-license = "MIT License"
+license = "MIT"
 readme = "README.md"
 packages = [{include = "nonebot_plugin_tuan_chatgpt"}]
 
