@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "nonebot-plugin-tuan-chatgpt"
-version = "0.1.0"
+name = "nonebot_plugin_tuan_chatgpt"
+version = "0.1.4"
 description = "\"Chat with tuanzi ~\""
 authors = ["TheLZY"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "nonebot_plugin_tuan_chatgpt"}]
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -14,7 +14,8 @@ tiktoken = "^0.3.0"
 nonebot2 = "^2.0.0rc3"
 nonebot-adapter-onebot = "^2.2.0"
 
+[tool.poetry.dev-dependencies]
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
