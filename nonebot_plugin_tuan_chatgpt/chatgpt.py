@@ -50,23 +50,26 @@ def check_message_length(message_list, message_remember_num) -> list :
             print(e)
     return message_list
 
-# In fact there should be no need to use asynchronous. No other Coroutines is needed inside this response.
+# Use openai async api
 async def chat(message_list):
     try:
-        response = await openai.ChatCompletion.create(
+        response = await openai.ChatCompletion.acreate(
         model = "gpt-3.5-turbo",
         messages = message_list,
         # temperature = 0.5,
         presence_penalty = -1.4
         )
-        answer = response['choices'][0]['message']['content'].strip()
+        answer = await response['choices'][0]['message']['content'].strip()
         
         if len(answer) != 0:  # Avoid blank answer.
             return answer
         else:
-            raise Exception
+            return None
+            # raise Exception
     except Exception as e:
         print(e) 
+        return None
+
 
 
 # ref: LittlePaimon

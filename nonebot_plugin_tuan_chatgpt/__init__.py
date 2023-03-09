@@ -79,7 +79,11 @@ async def main_chat(event: MessageEvent):
 
     messages = add_conversation(conversation, messages)
     messages = check_message_length(message_list = messages, message_remember_num = message_init_len + config.conversation_remember_num)
-    answer = chat(message_list = messages)
+    answer = await chat(message_list = messages)
+    
+    if not answer: # 有时候会返回空值
+        # print("Empty conversation received")
+        await chat_service.finish(f'呜呜呜，风大太，没听清，再来一遍？')
 
     answer_add = limit_conversation_size(answer, config.answer_max_size)
     messages = add_conversation(answer_add, messages, 'assistant')
