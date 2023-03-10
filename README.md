@@ -43,8 +43,8 @@ _✨ 来和团子一起聊天吧~ ✨_
 
 效果：
 
-![聊天效果](example2.png)
-
+<!--  ![聊天效果](example2.png)  -->
+![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/example2.png)
 
 
 ## 💿 安装
