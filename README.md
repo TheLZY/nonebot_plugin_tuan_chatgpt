@@ -163,17 +163,19 @@ conversation_remember_num 最好不要调得太高，记住太多话了就会变
 
 
 <details>
-<summary>一个例子</summary>
+
+<summary>一个简洁明了的例子</summary>
+
 
 conversation_remember_num = 14
 
-![聊天效果](example3.png)
+![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/example3.png)
 
 变成性冷淡机器人惹（悲）
 
 conversation_remember_num = 8
 
-![聊天效果](example4.png)
+![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/example4.png)
 
 </details>
 
