@@ -105,7 +105,7 @@ eg：
 | answer_split_size | 否 | 177 | 分隔回答长度 |
 | user_freq_lim | 否 | 4 | 限制群友发言速度（秒） |
 | group_freq_lim | 否 | 6 | 限制群内发言速度（秒）|
-| conversation_remember_num | 否 | 14 | 能记住的对话数目 |
+| conversation_remember_num | 否 | 8 | 能记住的对话数目 |
 | chat_use_proxy | 否 | False | 是否启用代理 |
 | chat_proxy_address | 否 | 14 | 代理地址 |
 
@@ -157,8 +157,25 @@ pip下载时可用
 
 而且有可能会在写错命令的时候误运行
 
-
 不过按理来说也不是不行，只需要把priority调低就行
+
+conversation_remember_num 最好不要调得太高，记住太多话了就会变成性冷淡机器人 😥
+
+
+<details>
+<summary>一个例子</summary>
+
+conversation_remember_num = 14
+
+![聊天效果](example3.png)
+
+变成性冷淡机器人惹（悲）
+
+conversation_remember_num = 8
+
+![聊天效果](example4.png)
+
+</details>
 
 
 
