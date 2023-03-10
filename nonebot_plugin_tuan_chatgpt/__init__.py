@@ -33,6 +33,9 @@ chat_service_history = on_command("历史记录", permission=SUPERUSER)
 
 openai.api_key = config.chatgpt_api
 
+if config.chat_use_proxy:
+    openai.proxy = config.chat_proxy_address
+
 # 调教
 # ref: https://github.com/PlexPt/awesome-chatgpt-prompts-zh
 

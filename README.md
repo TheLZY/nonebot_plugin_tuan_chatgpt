@@ -74,11 +74,17 @@ pip install nonebot-plugin-tuan-chatgpt
 
 环境配置：
 
-打开nonebot的`.env` 文件，写入您的chatgpt_api
+打开nonebot的`.env` 文件，写入您的 `chatgpt_api`
 
-```
-chatgpt_api=""
-```
+如果希望启用代理，则需要在`.env` 文件中，写入 `chat_use_proxy = True` 以及 `chat_proxy_address: { "代理类型": "代理地址"}`
+
+eg： 
+
+    chatgpt_api = "sk-114514"
+    chat_use_proxy = True
+    chat_proxy_address = {'http': 'http://127.0.0.1:10809', 'https': 'http://127.0.0.1:10809'}
+
+
 
 如果没有自动导入插件的功能，需要打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
 
@@ -100,6 +106,8 @@ chatgpt_api=""
 | user_freq_lim | 否 | 4 | 限制群友发言速度（秒） |
 | group_freq_lim | 否 | 6 | 限制群内发言速度（秒）|
 | conversation_remember_num | 否 | 14 | 能记住的对话数目 |
+| chat_use_proxy | 否 | False | 是否启用代理 |
+| chat_proxy_address | 否 | 14 | 代理地址 |
 
 
 
@@ -119,10 +127,10 @@ chatgpt_api=""
 ## 💡 TODO
 
 - [x] 回答分隔 （通过分段实现。可能会考虑换成图片发送）
+- [x] 支持使用梯子 ？
 - [ ] 未对私聊做发言频率限制。可能以后会添加？
-- [ ] 支持使用梯子 ？
-- [ ] 错误处理 ？
-- [ ] api 异步调用优化 （ 自动重试 / 报错）
+- [ ] 错误处理 （比如代理的检测之类的 <!-- - 倒是可以照着官方的写 不过还是得先在telegrambot上测试一下 --> ） ？
+- [ ] 异步调用优化 ? （自动重试 / 返回报错  <!-- - 但是估计得自己造轮子...不知道官方有没有提供 --> ）
 - [ ] 人格转换功能 ？
 - [ ] 通过@触发 ？ 
 - [ ] 修改人设 ？ 这个应该和修改触发方式一起
