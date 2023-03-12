@@ -2,7 +2,7 @@ import tiktoken
 import openai
 
 import asyncio
-
+import aiohttp
 # Freq limiter
 from collections import defaultdict
 import time
@@ -29,8 +29,18 @@ def num_tokens_from_messages(message_list, model="gpt-3.5-turbo-0301"):
                 See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
 
 
+
+# 有时候会冒出来这样的字
+# 一旦冒出来他就会一直说自己是人工智能了 （毕竟 presence_penalty 设置得比较高，如果出现了就甩不掉了）
+# 为了维持人设，必须把这样的词删掉
+wake_up_word = ["AI","助手","人工智能","语言模型","程序","预训练","虚构","角色","扮演","模拟"]
+
 def add_conversation(conversation: str, message_list : list, role: str = "user",):
+    if role == "assistant":
+        if any(item in conversation for item in wake_up_word):
+            return message_list
     message_list.append({"role": role, "content": conversation})
+
     return message_list
 
 
@@ -112,3 +122,22 @@ class FreqLimiter:
 freq_limiter = FreqLimiter()
 
 
+
+# Get cyber position
+# aka. Check the avaliability of proxy
+
+async def get_cyber_pos(use_proxy: bool = False, proxies: dict = None):
+    async with aiohttp.ClientSession() as session:
+        url = 'https://ipapi.co/json/'
+        # 优先使用http。与openai 协程查询逻辑相同。
+        if use_proxy:
+            if "https" in proxies.keys():
+                proxy_check = proxies['https']
+            else:
+                proxy_check = list(proxies.values())[0]
+        else:
+            proxy_check = None
+        async with session.get(url, proxy = proxy_check) as response:
+            resp_json = await response.json()
+            # print(response)
+            return resp_json["country_name"]

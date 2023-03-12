@@ -6,7 +6,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
 
-from .chatgpt import *
+from .util import *
 from .config import config
 import openai
 
@@ -71,10 +71,17 @@ async def main_chat(event: MessageEvent):
         elif not freq_limiter.check(f'chat-group{event.group_id}-{event.user_id}'):
             await chat_service.finish(f'你说话太快啦! {freq_limiter.left(f"chat-group{event.user_id}")}秒之后再理你！')
 
-    # 可以不保留触发的团子两个字
-    # conversation = str(event.get_message())[2:]
-
     conversation = str(event.get_message())
+
+    if conversation == "团子看看位置":
+        try:
+            pos = await get_cyber_pos(config.chat_use_proxy, config.chat_proxy_address)
+        except Exception as e:
+            # print(e)
+            await chat_service_history.finish(f'赛博旅游失败！都怪{e}！')
+        # 不能写里面，不然finish也会被try视为报错
+        await chat_service_history.finish(f'团子现在正在{pos}赛博旅游中~ ') 
+
     # Length detect for conversation
     conversation = limit_conversation_size(conversation, config.conversation_max_size)
 
@@ -86,7 +93,8 @@ async def main_chat(event: MessageEvent):
     
     if not answer: # 有时候会返回空值
         # print("Empty conversation received")
-        await chat_service.finish(f'呜呜呜，风大太，没听清，再来一遍？')
+        messages.pop() # 如果没回答 就不需要往列表里加东西
+        await chat_service.finish(f'呜呜呜，风好太，网好差，听不清，等风小了再试试嘛')
 
     answer_add = limit_conversation_size(answer, config.answer_max_size)
     messages = add_conversation(answer_add, messages, 'assistant')
@@ -114,7 +122,7 @@ async def main_chat(event: MessageEvent):
 async def send_messagelist(event: MessageEvent):
     # 太长了容易被腾讯拦截 
     messages = global_messages
-    for conversation in messages[-6:]:
+    for conversation in messages:
         if conversation['role'] == "user":
             # 有时候部分QQ客户端不显示 （PC / 手机） 可能有风控危险
             # 间隔一段时间发一次，避免发送速度过快引发腾讯风控
