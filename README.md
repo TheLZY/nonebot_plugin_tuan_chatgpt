@@ -142,15 +142,14 @@ eg：
 ## 💡 TODO
 
 - [x] 回答分隔 （通过分段实现。可能会考虑换成图片发送）
-- [x] 支持使用梯子 ？
+- [x] 支持使用代理
+- [x] 增加代理测试 通过返回的ip地址判断代理是否有效 赛博旅游中！  <!--  http://icanhazip.com/ --> 
 - [ ] 未对私聊做发言频率限制。可能以后会添加？
 - [ ] 错误处理 （比如代理的检测之类的   <!-- - 倒是可以照着官方的写 不过还是得先在telegrambot上测试一下 --> ） ？
 - [ ] 异步调用优化 ? （自动重试 / 返回报错  <!-- - 但是估计得自己造轮子...不知道官方有没有提供 --> ）
-- [ ] 人格转换功能 ？
 - [ ] 通过@触发 ？ 
 - [ ] 修改人设 ？ 这个应该和修改触发方式一起
-- [ ] 增加代理测试 通过返回的ip地址判断代理是否有效  <!--  http://icanhazip.com/ --> 
-- [ ] 随机人格？ 感觉会很有意思（
+- [ ] 随机人设 ？ 感觉会很有意思（
 <!-- - [ ] 全局变量似乎有数据不一致的问题 是否需要加锁？ 毕竟只是一个小小的列表 就算出现一点顺序错误也无伤大雅 --> 
 
 
@@ -179,10 +178,12 @@ eg：
 
 conversation_remember_num 最好不要调得太高，记住太多话了就会变成性冷淡机器人 😥
 
+出现了 wake up 词也会变回去，不过现在应该多说两句话就好了
+
 
 <details>
 
-<summary>一个简洁明了的例子</summary>
+<summary>一个活生生的例子</summary>
 
 
 conversation_remember_num = 14
@@ -191,7 +192,7 @@ conversation_remember_num = 14
 
 变成性冷淡机器人惹（悲）
 
-conversation_remember_num = 8
+conversation_remember_num = 7
 
 ![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/example4.png)
 
