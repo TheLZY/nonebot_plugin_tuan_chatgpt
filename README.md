@@ -147,11 +147,11 @@ eg：
 - [x] 支持使用代理
 - [x] 增加代理测试 通过返回的ip地址判断代理是否有效 绝赞赛博旅行中！  <!--  http://icanhazip.com/ --> 
 - [x] 私聊做发言频率限制。
-- [x] 错误处理 （比如代理的检测之类的 以及报错方式 团子被玩坏了！这一定不是团子的错！（繁体） 可以写个函数error message   <!-- - 倒是可以照着官方的写 不过还是得先在telegrambot上测试一下 --> ） ？
+- [x] 错误处理 <!--（比如代理的检测之类的 以及报错方式 团子被玩坏了！这一定不是团子的错！（繁体） 可以写个函数error message    - 倒是可以照着官方的写 不过还是得先在telegrambot上测试一下 ）-->
 - [x] 异步调用优化 ? （自动重试 / 返回报错  <!-- - 但是估计得自己造轮子...不知道官方有没有提供 --> ）
 - [ ] 通过@触发 ？ 
 - [ ] 修改人设 ？ 这个应该和修改触发方式一起
-- [ ] 随机人设 ？ 感觉会很有意思（
+- [ ] 随机人设 ？ 感觉会很有意思（   <!-- 可以写一个类 每一个人设要抽5次才会变 实现可以靠get一次就step一下  -->
 - [ ] Openai 抽风处理（暂时只输出 3*177 个长度的回答 可以根据相同字数出现次数来 同一个字连续出现6次判定为抽风？）
 <!-- - [ ] 全局变量似乎有数据不一致的问题 是否需要加锁？ 毕竟只是一个小小的列表 就算出现一点顺序错误也无伤大雅 --> 
 
@@ -255,7 +255,6 @@ openai
 
 [nonebot_plugin_naturel_gpt](https://github.com/KroMiose/nonebot_plugin_naturel_gpt) by @[KroMiose](https://github.com/KroMiose)
 
-https://github.com/KroMiose/nonebot_plugin_naturel_gpt
 
 [nonebot-plugin-oachat](https://github.com/Gin2O/nonebot_plugin_oachat) by @[Gin2O](https://github.com/Gin2O)
 
