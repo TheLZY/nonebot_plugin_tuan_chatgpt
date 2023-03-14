@@ -237,7 +237,7 @@ answer = response.choices[0].message.content
 
 - 增加错误重试 （如果失败 自动重试最多三次 对于梯子不稳定的时候帮助很大）
 - 增加报错输出 （3次都失败的话 生成 ~~有趣的~~ 报错信息 以第三次失败返回的 error 为准）
-- 修改消息触发器 现在也能通过@聊天了
+- 修改消息触发器 ~~试图通过@聊天 大失败~~
 - 增加私聊频率限制 默认为4秒一次
 
 
@@ -249,14 +249,18 @@ openai
 
 [NoneBot](https://github.com/nonebot)
 
-[小派蒙|LittlePaimon](https://github.com/CMHopeSunshine/LittlePaimon) by @[CMHopeSunshine](https://github.com/CMHopeSunshine/CMHopeSunshine)
+[小派蒙|LittlePaimon](https://github.com/CMHopeSunshine/LittlePaimon) by @[CMHopeSunshine](https://github.com/CMHopeSunshine)
 
-[nonebot-plugin-chatgpt](https://github.com/A-kirami/nonebot-plugin-chatgpt) by @[A-kirami](https://github.com/A-kirami/A-kirami)
+[nonebot-plugin-chatgpt](https://github.com/A-kirami/nonebot-plugin-chatgpt) by @[A-kirami](https://github.com/A-kirami)
+
+[nonebot_plugin_naturel_gpt](https://github.com/KroMiose/nonebot_plugin_naturel_gpt) by @[KroMiose](https://github.com/KroMiose)
+
+https://github.com/KroMiose/nonebot_plugin_naturel_gpt
 
 [nonebot-plugin-oachat](https://github.com/Gin2O/nonebot_plugin_oachat) by @[Gin2O](https://github.com/Gin2O)
 
-[ChatGPT 中文调教指南]( https://github.com/PlexPt/awesome-chatgpt-prompts-zh) by @[PlexPt](https://github.com/PlexPt/PlexPt)
+[ChatGPT 中文调教指南]( https://github.com/PlexPt/awesome-chatgpt-prompts-zh) by @[PlexPt](https://github.com/PlexPt)
 
 [Little Paimon with chatgpt](https://github.com/meatjam/LittlePaimon) by @[meatjam](https://github.com/meatjam)
 
-[nonebot_plugin_biliav](https://github.com/knva/nonebot_plugin_biliav) by @[knva](https://github.com/knva/knva)
+[nonebot_plugin_biliav](https://github.com/knva/nonebot_plugin_biliav) by @[knva](https://github.com/knva)
