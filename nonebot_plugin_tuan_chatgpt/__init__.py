@@ -1,12 +1,13 @@
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, GroupMessageEvent, PrivateMessageEvent
 # from nonebot.adapters.telegram import Bot
 # from nonebot.adapters.telegram.event import MessageEvent
-from nonebot import on_startswith, on_command
+from nonebot import on_command, on_message
 from nonebot.plugin import PluginMetadata
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
+from nonebot.rule import to_me, startswith
 
-from .util import *
+from .utils import *
 from .config import config
 import openai
 
@@ -27,8 +28,7 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-chat_service = on_startswith('团子', priority = 8, block=True)
-
+chat_service = on_message(startswith("团子", ignorecase = True) or to_me(), priority = 99, block = False)
 chat_service_history = on_command("历史记录", permission=SUPERUSER)
 
 openai.api_key = config.chatgpt_api
@@ -70,6 +70,9 @@ async def main_chat(event: MessageEvent):
             await chat_service.finish(f'你们说话太快啦! {freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
         elif not freq_limiter.check(f'chat-group{event.group_id}-{event.user_id}'):
             await chat_service.finish(f'你说话太快啦! {freq_limiter.left(f"chat-group{event.user_id}")}秒之后再理你！')
+    elif isinstance(event, PrivateMessageEvent):
+        if not freq_limiter.check(f'chat-user{event.user_id}', config.user_freq_lim):
+            await chat_service.finish(f'你说话太快啦! {freq_limiter.left(f"chat-user{event.user_id}")}秒之后再理你！')
 
     conversation = str(event.get_message())
 
@@ -89,12 +92,15 @@ async def main_chat(event: MessageEvent):
 
     messages = add_conversation(conversation, messages)
     messages = check_message_length(message_list = messages, message_remember_num = message_init_len + config.conversation_remember_num)
-    answer = await chat(message_list = messages)
     
-    if not answer: # 有时候会返回空值
-        # print("Empty conversation received")
-        messages.pop() # 如果没回答 就不需要往列表里加东西
-        await chat_service.finish(f'呜呜呜，风好太，网好差，听不清，等风小了再试试嘛')
+    # 主要交流函数
+    try:
+        answer = await chat(message_list = messages)
+    except Exception as e:
+        # print("调用API失败：", e)
+        messages.pop()  # 但是这一步的时候协程可能会出现问题 就是加锁又太影响性能了 算了
+        error_message = generate_error_message(e = e)
+        await chat_service.finish(error_message)
 
     answer_add = limit_conversation_size(answer, config.answer_max_size)
     messages = add_conversation(answer_add, messages, 'assistant')
@@ -102,6 +108,8 @@ async def main_chat(event: MessageEvent):
     if isinstance(event, GroupMessageEvent):
         freq_limiter.start(f'chat-group{event.group_id}', config.user_freq_lim)
         freq_limiter.start(f'chat-group{event.group_id}-{event.user_id}', config.group_freq_lim)
+    elif isinstance(event, PrivateMessageEvent):
+        freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
 
     # Length division for answer
     # 避免腾讯风控。
@@ -109,9 +117,12 @@ async def main_chat(event: MessageEvent):
     # 不过其实也可以渲染成图片发出去。但是考虑到长回答的时候大部分是代码有关的，发图会不太方便复制
     if len(answer) < config.answer_split_size:
         await chat_service.finish(answer)
+
+    # 偶尔会发疯 暂时考虑先发前3条
+    # 剩下的可以使用消息转发
     else:
         answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
-        for i in answer_segments:
+        for i in answer_segments[:3]:
             # Use sleep to avoid Tencent risk management
             await chat_service.send(i)
             await asyncio.sleep(1)

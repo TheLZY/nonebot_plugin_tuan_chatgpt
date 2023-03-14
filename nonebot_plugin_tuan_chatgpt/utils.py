@@ -6,7 +6,9 @@ import aiohttp
 # Freq limiter
 from collections import defaultdict
 import time
-
+import asyncio
+from nonebot.log import logger
+import random
 
 def num_tokens_from_messages(message_list, model="gpt-3.5-turbo-0301"):
     """Returns the number of tokens used by a list of messages."""
@@ -33,7 +35,7 @@ def num_tokens_from_messages(message_list, model="gpt-3.5-turbo-0301"):
 # 有时候会冒出来这样的字
 # 一旦冒出来他就会一直说自己是人工智能了 （毕竟 presence_penalty 设置得比较高，如果出现了就甩不掉了）
 # 为了维持人设，必须把这样的词删掉
-wake_up_word = ["AI","助手","人工智能","语言模型","程序","预训练","虚构","角色","扮演","模拟"]
+wake_up_word = ["AI","助手","人工智能","语言模型","程序","预训练","虚构","角色","扮演","模拟","模仿"]
 
 def add_conversation(conversation: str, message_list : list, role: str = "user",):
     if role == "assistant":
@@ -52,33 +54,46 @@ def limit_conversation_size(conversation: str, conversaton_max_size: int) -> str
         return conversation
 
 
-def check_message_length(message_list, message_remember_num) -> list :
-    while num_tokens_from_messages(message_list) > 2000 or len(message_list) > message_remember_num:   # tiaojiao have 7 items. So it can remember 7 other conversations.
+def check_message_length(message_list, message_init_len, conversation_remember_num) -> list :
+    while num_tokens_from_messages(message_list) > 2000 or len(message_list) > message_init_len + conversation_remember_num:   # tiaojiao have 7 items. So it can remember 7 other conversations.
         try:
-            message_list.pop(7)
+            message_list.pop(message_init_len)
         except Exception as e:
-            print(e)
+            logger.error(f'check_message_length 发生错误 {e}')
     return message_list
+        # messages
 
 # Use openai async api
 async def chat(message_list):
-    try:
-        response = await openai.ChatCompletion.acreate(
-        model = "gpt-3.5-turbo",
-        messages = message_list,
-        # temperature = 0.5,
-        presence_penalty = -1.4
-        )
-        answer = await response['choices'][0]['message']['content'].strip()
-        
-        if len(answer) != 0:  # Avoid blank answer.
-            return answer
-        else:
-            return None
-            # raise Exception
-    except Exception as e:
-        print(e) 
-        return None
+    retries = 0
+    last_exception = None
+    while retries < 3:  # 如果失败 自动重试3次 否则raise 最后一次错误
+        try:
+            response = await openai.ChatCompletion.acreate(
+                model = "gpt-3.5-turbo-0301",   # 最新的模型抽风了好几次 怕了怕了
+                messages = message_list,
+                # temperature = 0.5,
+                presence_penalty = - 0.8,
+                # frequency_penalty = - 0.5,  # 这个加了容易出bug
+                timeout = 20
+                # 这个如果报错 TryAgain 会自动重试 但是是api返回的 所以还是自己写 retries 吧
+                )
+
+            answer = response.choices[0].message.content
+            if len(answer) != 0:  #避免返回空白
+                return answer
+            else:
+                last_exception =  'Empty answer received'
+        # 也可以用openai自己的报错
+        # except openai.error.OpenAIError as e:
+        # print(e.http_status)
+        # print(e.error)
+        except Exception as e:
+            retries += 1
+            last_exception = e
+            logger.error(f'第 {retries} 次请求openai api 发生错误，报错信息为{e}')
+            await asyncio.sleep(1)  # 暂停一秒钟后重试
+    raise last_exception
 
 
 
@@ -141,3 +156,22 @@ async def get_cyber_pos(use_proxy: bool = False, proxies: dict = None):
             resp_json = await response.json()
             # print(response)
             return resp_json["country_name"]
+
+
+
+def generate_error_message(e)  -> str:
+    '''
+    根据错误信息 产生错误消息
+    '''
+    
+    if str(e) == "Error communicating with OpenAI":
+        e = "梯子又出问题了！"
+
+    error_message_list = [
+        f'呜呜呜，风好太，网好差，听不清，等风小了再试试嘛 \n对了，我刚才捡到张纸条，上面写了 {e}',
+        f'团子被玩兒壞了！這肯定不是团子的問題！絕對不是！要怪就怪{e} ！',
+        f'（无感情声线） 报错 {e}'
+    ]
+
+    error_message = random.choice(error_message_list)
+    return error_message
