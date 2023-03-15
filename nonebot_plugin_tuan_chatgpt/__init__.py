@@ -28,13 +28,13 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-# 其实也可以是收到at，然后没有别的程序被触发的时候就回复。因为paimon bot似乎会自动将nickname转义为at ？
-# 只需要把priority调低就行
-# 但是有可能会写错命令的时候误运行
-# 可以试试都加上?
-# 其实固定团子也不是不行，这样就不会影响其他的插件了
 
-chat_service = on_message(rule = (startswith("团子", ignorecase = True) ), priority = 99, block = False)
+async def chat_checker(event: MessageEvent) -> bool:
+    # 检查 是否以团子开头 / to_me. 可能会造成一点性能问题
+    res = str(event.get_message())[:2]  == '团子' or event.is_tome()
+    return res
+
+chat_service = on_message(rule = chat_checker , priority = 99, block = False)
 chat_service_history = on_command("历史记录", permission=SUPERUSER)
 
 openai.api_key = config.chatgpt_api
