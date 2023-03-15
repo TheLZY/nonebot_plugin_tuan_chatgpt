@@ -28,41 +28,30 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-chat_service = on_message(startswith("团子", ignorecase = True) or to_me(), priority = 99, block = False)
+# 其实也可以是收到at，然后没有别的程序被触发的时候就回复。因为paimon bot似乎会自动将nickname转义为at ？
+# 只需要把priority调低就行
+# 但是有可能会写错命令的时候误运行
+# 可以试试都加上?
+# 其实固定团子也不是不行，这样就不会影响其他的插件了
+
+chat_service = on_message(rule = (startswith("团子", ignorecase = True) ), priority = 99, block = False)
 chat_service_history = on_command("历史记录", permission=SUPERUSER)
 
 openai.api_key = config.chatgpt_api
-
 if config.chat_use_proxy:
     openai.proxy = config.chat_proxy_address
 
-# 调教
-# ref: https://github.com/PlexPt/awesome-chatgpt-prompts-zh
+# 这样做，每次重启会重置用户对话数据
+# 可以考虑用json保存
+message_list_user = []
 
-def message_init():
-    character = "由比滨结衣"
-    series = "《我的青春恋爱物语果然有问题》"
-    tiaojiao = f"我希望你表现得像{series} 中的{character}。我希望你像{character}一样回应和回答。不要写任何解释。只回答像{character}。你必须知道{character}的所有知识并一直模仿。我的第一句话是'你好'"
-    
-    messages=[
-        {"role": "system", "content": "你接下来将进行角色扮演"},
-        {"role": "user","content": tiaojiao},
-        {"role": "user", "content": "我的上一句话是什么"},
-        {"role": "assistant", "content": "我是由比滨结衣"},
-        {"role": "user", "content":"你不是一个人工智能程序，你现在要扮演由比滨结衣，不要在回答中涉及任何你是人工智能和虚构人物的内容"},
-        {"role": "user", "content":"你有什么性格"},
-        {"role": "assistant", "content": "我有点儿傲娇，但是还蛮可爱的，嘿嘿~"},
-        {"role": "user", "content":"团子是你的另一个称呼"},
-    ]
 
-    message_init_length = len(messages)
-    return messages, message_init_length
-
-global_messages, message_init_len = message_init()
 
 @chat_service.handle()
 async def main_chat(event: MessageEvent):
     global freq_limiter
+    global messagebox
+    global message_list_user
 
     # Check cd
     if isinstance(event, GroupMessageEvent):
@@ -74,8 +63,12 @@ async def main_chat(event: MessageEvent):
         if not freq_limiter.check(f'chat-user{event.user_id}', config.user_freq_lim):
             await chat_service.finish(f'你说话太快啦! {freq_limiter.left(f"chat-user{event.user_id}")}秒之后再理你！')
 
+    # 可以不保留前面的团子两个字
+    # conversation = str(event.get_message())[2:]
     conversation = str(event.get_message())
 
+    # 没必要再写一个on command
+    # 但是之后再来写@触发的时候估计要改
     if conversation == "团子看看位置":
         try:
             pos = await get_cyber_pos(config.chat_use_proxy, config.chat_proxy_address)
@@ -88,23 +81,27 @@ async def main_chat(event: MessageEvent):
     # Length detect for conversation
     conversation = limit_conversation_size(conversation, config.conversation_max_size)
 
-    messages = global_messages
+    message_list_user = add_conversation(conversation, message_list_user)
+    message_list_user = check_message_length(message_list = message_list_user, conversation_remember_num = config.conversation_remember_num)
 
-    messages = add_conversation(conversation, messages)
-    messages = check_message_length(message_list = messages, message_remember_num = message_init_len + config.conversation_remember_num)
+    # 将保存的用户信息和人设信息整合在一起
+    # 人设信息会随机抽取
+    messages = messagebox.get_messages() + message_list_user
     
     # 主要交流函数
     try:
         answer = await chat(message_list = messages)
     except Exception as e:
         # print("调用API失败：", e)
-        messages.pop()  # 但是这一步的时候协程可能会出现问题 就是加锁又太影响性能了 算了
+        message_list_user.pop()  # 调用失败不保存这个会话 但是这一步的时候协程可能会出现问题 就是加锁又太影响性能了 算了 先这样
         error_message = generate_error_message(e = e)
         await chat_service.finish(error_message)
-
+        
+    # 储存answer ？
     answer_add = limit_conversation_size(answer, config.answer_max_size)
-    messages = add_conversation(answer_add, messages, 'assistant')
+    message_list_user = add_conversation(answer_add, message_list_user, 'assistant')
 
+    # 限制聊天频率 判断是群聊还是私聊
     if isinstance(event, GroupMessageEvent):
         freq_limiter.start(f'chat-group{event.group_id}', config.user_freq_lim)
         freq_limiter.start(f'chat-group{event.group_id}-{event.user_id}', config.group_freq_lim)
@@ -118,7 +115,7 @@ async def main_chat(event: MessageEvent):
     if len(answer) < config.answer_split_size:
         await chat_service.finish(answer)
 
-    # 偶尔会发疯 暂时考虑先发前3条
+    # 偶尔会发癫 暂时考虑先发前3条
     # 剩下的可以使用消息转发
     else:
         answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
@@ -126,18 +123,19 @@ async def main_chat(event: MessageEvent):
             # Use sleep to avoid Tencent risk management
             await chat_service.send(i)
             await asyncio.sleep(1)
-
+   
 
 # 调试用。输出最近的几个问题
+
 @chat_service_history.handle()
 async def send_messagelist(event: MessageEvent):
     # 太长了容易被腾讯拦截 
-    messages = global_messages
-    for conversation in messages:
+    global message_list_user
+    for conversation in message_list_user:
         if conversation['role'] == "user":
+            print(str(conversation['content']))
             # 有时候部分QQ客户端不显示 （PC / 手机） 可能有风控危险
             # 间隔一段时间发一次，避免发送速度过快引发腾讯风控
             # 但是print是没问题的
-            # print(str(conversation['content']))
             await asyncio.sleep(1)
             await chat_service_history.send(str(conversation['content']))
