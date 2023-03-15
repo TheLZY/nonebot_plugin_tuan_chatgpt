@@ -148,7 +148,7 @@ eg：
 - [x] 支持使用代理
 - [x] 增加代理测试 通过返回的ip地址判断代理是否有效 绝赞赛博旅行中！  <!--  http://icanhazip.com/ --> 
 - [x] 私聊做发言频率限制。
-- [x] 错误处理 （比如代理的检测之类的 以及报错方式 团子被玩坏了！这一定不是团子的错！（繁体） 可以写个函数error message   <!-- - 倒是可以照着官方的写 不过还是得先在telegrambot上测试一下 --> ） ？
+- [x] 错误处理 <!--（比如代理的检测之类的 以及报错方式 团子被玩坏了！这一定不是团子的错！（繁体） 可以写个函数error message    - 倒是可以照着官方的写 不过还是得先在telegrambot上测试一下 ）-->
 - [x] 异步调用优化 ? （自动重试 / 返回报错  <!-- - 但是估计得自己造轮子...不知道官方有没有提供 --> ）
 - [x] 随机人设 ？ 感觉会很有意思（
 - [ ] 通过@触发 ？ 
@@ -244,7 +244,7 @@ answer = response.choices[0].message.content
 
 - 增加错误重试 （如果失败 自动重试最多三次 对于梯子不稳定的时候帮助很大）
 - 增加报错输出 （3次都失败的话 生成 ~~有趣的~~ 报错信息 以第三次失败返回的 error 为准）
-- 修改消息触发器 现在也能通过@聊天了
+- 修改消息触发器 ~~试图通过@聊天 大失败~~
 - 增加私聊频率限制 默认为4秒一次
 
 
@@ -256,14 +256,17 @@ openai
 
 [NoneBot](https://github.com/nonebot)
 
-[小派蒙|LittlePaimon](https://github.com/CMHopeSunshine/LittlePaimon) by @[CMHopeSunshine](https://github.com/CMHopeSunshine/CMHopeSunshine)
+[小派蒙|LittlePaimon](https://github.com/CMHopeSunshine/LittlePaimon) by @[CMHopeSunshine](https://github.com/CMHopeSunshine)
 
-[nonebot-plugin-chatgpt](https://github.com/A-kirami/nonebot-plugin-chatgpt) by @[A-kirami](https://github.com/A-kirami/A-kirami)
+[nonebot-plugin-chatgpt](https://github.com/A-kirami/nonebot-plugin-chatgpt) by @[A-kirami](https://github.com/A-kirami)
+
+[nonebot_plugin_naturel_gpt](https://github.com/KroMiose/nonebot_plugin_naturel_gpt) by @[KroMiose](https://github.com/KroMiose)
+
 
 [nonebot-plugin-oachat](https://github.com/Gin2O/nonebot_plugin_oachat) by @[Gin2O](https://github.com/Gin2O)
 
-[ChatGPT 中文调教指南]( https://github.com/PlexPt/awesome-chatgpt-prompts-zh) by @[PlexPt](https://github.com/PlexPt/PlexPt)
+[ChatGPT 中文调教指南]( https://github.com/PlexPt/awesome-chatgpt-prompts-zh) by @[PlexPt](https://github.com/PlexPt)
 
 [Little Paimon with chatgpt](https://github.com/meatjam/LittlePaimon) by @[meatjam](https://github.com/meatjam)
 
-[nonebot_plugin_biliav](https://github.com/knva/nonebot_plugin_biliav) by @[knva](https://github.com/knva/knva)
+[nonebot_plugin_biliav](https://github.com/knva/nonebot_plugin_biliav) by @[knva](https://github.com/knva)
