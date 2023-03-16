@@ -60,7 +60,7 @@ async def main_chat(event: MessageEvent):
         elif not freq_limiter.check(f'chat-group{event.group_id}-{event.user_id}'):
             await chat_service.finish(f'你说话太快啦! {freq_limiter.left(f"chat-group{event.user_id}")}秒之后再理你！')
     elif isinstance(event, PrivateMessageEvent):
-        if not freq_limiter.check(f'chat-user{event.user_id}', config.user_freq_lim):
+        if not freq_limiter.check(f'chat-user{event.user_id}'):
             await chat_service.finish(f'你说话太快啦! {freq_limiter.left(f"chat-user{event.user_id}")}秒之后再理你！')
 
     # 可以不保留前面的团子两个字
