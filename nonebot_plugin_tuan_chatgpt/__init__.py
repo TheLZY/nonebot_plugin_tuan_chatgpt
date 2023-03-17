@@ -29,17 +29,31 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
+### 初始化设置
+if config.chatgpt_api:
+    openai.api_key = config.chatgpt_api
+else:
+    logger.error("请检查 tuan-chatgpt api")
+
+if config.chat_use_proxy:
+    # 优先使用 https （类似openai的做法）
+    # 两个都写的话不知道为什么容易报错
+    # openai.proxy =  {'http': config.chat_proxy_address_http, 'https': config.chat_proxy_address_https}
+    if config.chat_proxy_address_https:
+        openai.proxy ={'https': config.chat_proxy_address_https}
+    elif config.chat_proxy_address_http:
+        openai.proxy = {'http': config.chat_proxy_address_http}
+    else:
+        logger.error("请检查 tuan-chatgpt 代理地址")
+
+
 async def chat_checker(event: MessageEvent) -> bool:
     # 检查 是否以团子开头 / to_me. 可能会造成一点性能问题
     res = str(event.get_message())[:2]  == '团子' or event.is_tome()
     return res
-
 chat_service = on_message(rule = chat_checker , priority = 99, block = False)
 chat_service_history = on_command("历史记录", permission=SUPERUSER)
 
-openai.api_key = config.chatgpt_api
-if config.chat_use_proxy:
-    openai.proxy = config.chat_proxy_address
 
 # 这样做，每次重启会重置用户对话数据
 # 可以考虑用json保存
