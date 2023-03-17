@@ -40,11 +40,13 @@ if config.chat_use_proxy:
     # 两个都写的话不知道为什么容易报错
     # openai.proxy =  {'http': config.chat_proxy_address_http, 'https': config.chat_proxy_address_https}
     if config.chat_proxy_address_https:
-        openai.proxy ={'https': config.chat_proxy_address_https}
+        proxy ={'https': config.chat_proxy_address_https}
     elif config.chat_proxy_address_http:
-        openai.proxy = {'http': config.chat_proxy_address_http}
+        proxy = {'http': config.chat_proxy_address_http}
     else:
         logger.error("请检查 tuan-chatgpt 代理地址")
+    openai.proxy = proxy
+
 
 
 async def chat_checker(event: MessageEvent) -> bool:
@@ -85,6 +87,13 @@ async def main_chat(event: MessageEvent):
     # 但是之后再来写@触发的时候估计要改
     if conversation == "团子看看位置":
         try:
+            if config.chat_proxy_address_https:
+                proxy ={'https': config.chat_proxy_address_https}
+            elif config.chat_proxy_address_http:
+                proxy = {'http': config.chat_proxy_address_http}
+            else:
+                logger.error("请检查 tuan-chatgpt 代理地址")
+
             pos = await get_cyber_pos(config.chat_use_proxy, config.chat_proxy_address)
         except Exception as e:
             # print(e)
