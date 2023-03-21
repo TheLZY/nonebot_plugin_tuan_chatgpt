@@ -5,7 +5,6 @@ from nonebot import on_command, on_message
 from nonebot.plugin import PluginMetadata
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
-from nonebot.rule import to_me, startswith
 
 from .utils import *
 from .config import config
@@ -48,11 +47,11 @@ if config.chat_use_proxy:
     openai.proxy = proxy
 
 
-
 async def chat_checker(event: MessageEvent) -> bool:
     # 检查 是否以团子开头 / to_me. 可能会造成一点性能问题
     res = str(event.get_message())[:2]  == '团子' or event.is_tome()
     return res
+
 chat_service = on_message(rule = chat_checker , priority = 99, block = False)
 chat_service_history = on_command("历史记录", permission=SUPERUSER)
 
@@ -60,7 +59,6 @@ chat_service_history = on_command("历史记录", permission=SUPERUSER)
 # 这样做，每次重启会重置用户对话数据
 # 可以考虑用json保存
 message_list_user = []
-
 
 
 @chat_service.handle()
@@ -94,7 +92,7 @@ async def main_chat(event: MessageEvent):
             else:
                 logger.error("请检查 tuan-chatgpt 代理地址")
 
-            pos = await get_cyber_pos(config.chat_use_proxy, config.chat_proxy_address)
+            pos = await get_cyber_pos(config.chat_use_proxy, proxy)
         except Exception as e:
             # print(e)
             await chat_service_history.finish(f'赛博旅游失败！都怪{e}！')
@@ -120,7 +118,7 @@ async def main_chat(event: MessageEvent):
         error_message = generate_error_message(e = e)
         await chat_service.finish(error_message)
         
-    # 储存answer ？
+    # 储存answer
     answer_add = limit_conversation_size(answer, config.answer_max_size)
     message_list_user = add_conversation(answer_add, message_list_user, 'assistant')
 

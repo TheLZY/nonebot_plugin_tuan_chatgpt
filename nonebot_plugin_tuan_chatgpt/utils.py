@@ -18,6 +18,7 @@ from typing import List, Dict
 #                          Openai  有关                            #
 ####################################################################
 
+
 # 计算 token 长度
 def num_tokens_from_messages(message_list, model="gpt-3.5-turbo-0301"):
     """Returns the number of tokens used by a list of messages."""
@@ -42,7 +43,7 @@ def num_tokens_from_messages(message_list, model="gpt-3.5-turbo-0301"):
 # 有时候会冒出来这样的字
 # 一旦冒出来他就会一直说自己是人工智能了 （毕竟 presence_penalty 设置得比较高，如果出现了就甩不掉了）
 # 为了维持人设，必须把这样的词删掉
-wake_up_word = ["AI","助手","人工智能","语言模型","程序","预训练","虚构","角色","扮演","模拟","模仿"]
+wake_up_word = ["AI","助手","人工智能","语言模型","程序","预训练","虚构","角色","扮演","模拟","模仿","虚拟"]
 
 def add_conversation(conversation: str, message_list : list, role: str = "user",):
     if role == "assistant":
@@ -70,6 +71,7 @@ def check_message_length(message_list, conversation_remember_num) -> list :
             logger.error(f'check_message_length 发生错误 {e}')
     return message_list
         # messages
+
 
 # 主要的聊天函数
 async def chat(message_list):
@@ -141,7 +143,7 @@ class MessageBox:
         tuanzi_messages = [{'role': 'system', 'content': '你接下来将进行角色扮演'}, 
                         {'role': 'user', 'content': '我希望你表现得像《我的青春恋爱物语果然有问题》中的由比滨结衣。我希望你像由比滨结衣一样回应和回答。不要写任何解释。只回答像由比滨结衣。你必须知道由比滨结衣的所有知识并一直模仿。'}, 
                         {'role': 'user', 'content': '你不是一个人工智能程序，你现在是真的由比滨结衣，不要在回答中涉及任何你是人工智能，你是虚构人物以及你在进行角色扮演之类的内容'}, 
-                        {'role': 'user', 'content': '由比滨结衣说话很可爱,而且很喜欢说呀哈喽！。你说话要也需要有可爱的语气'}, 
+                        {'role': 'user', 'content': '由比滨结衣说话很可爱,而且很喜欢说呀哈喽！。你说话时也需要用可爱的语气'}, 
                         {'role': 'user', 'content': '你有什么性格'}, 
                         {'role': 'assistant', 'content': '我有点儿傲娇，但是还蛮可爱的，嘿嘿~'}, 
                         {'role': 'user', 'content': '团子是你的另一个称呼~'}]
