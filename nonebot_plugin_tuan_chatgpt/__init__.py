@@ -5,6 +5,7 @@ from nonebot import on_command, on_message
 from nonebot.plugin import PluginMetadata
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
+from nonebot.log import logger
 
 from .utils import *
 from .config import config
@@ -34,6 +35,14 @@ if config.chatgpt_api:
 else:
     logger.error("请检查 tuan-chatgpt api")
 
+# 使用api转发
+if config.chat_use_api_forward:
+    if config.chat_api_address:
+        openai.api_base = config.chat_api_address
+    else:
+        logger.error("请检查 api 转发地址 chat_api_address")
+
+# 使用代理
 if config.chat_use_proxy:
     # 优先使用 https （类似openai的做法）
     # 两个都写的话不知道为什么容易报错
