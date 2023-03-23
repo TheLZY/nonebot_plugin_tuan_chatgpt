@@ -144,6 +144,8 @@ eg：
 | conversation_remember_num | 否 | 7 | 能记住的对话数目 |
 | chat_use_proxy | 否 | False | 是否启用代理 |
 | chat_proxy_address | 否 | None | 代理地址 |
+| chat_use_api_forward | 否 | False | 是否启用api转发 |
+| chat_api_address | 否 | None | api转发地址 |
 
 
 
