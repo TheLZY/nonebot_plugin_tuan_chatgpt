@@ -101,7 +101,7 @@ pip install nonebot-plugin-tuan-chatgpt
 
 打开nonebot的`.env` 文件，写入您的 `chatgpt_api`
 
-如果希望启用代理，则需要在`.env` 文件中，写入 `chat_use_proxy = True` 以及 `chat_proxy_address_https = "代理地址"` 或 `chat_proxy_address_http = "代理地址"` (类似openai的方式，会优先使用https的地址。但是https经常会报错（aiohttp和urllib3都可能会有问题），可以只写http的地址)
+如果希望启用代理，则需要在`.env` 文件中，写入 `chat_use_proxy = True` 以及 `chat_proxy_address_https = "代理地址"` 或 `chat_proxy_address_http = "代理地址"`  (处理逻辑类似openai，优先使用https。但是https经常会报错（aiohttp和urllib3都可能会造成问题），推荐只使用http)
 
 如果希望启用api转发 (类似 [腾讯云函数搭建 OpenAI 国内代理](https://github.com/Ice-Hazymoon/openai-scf-proxy) 通过云函数等方式转发消息 )，则需要写入写入 `chat_use_api_forward = True` 以及 `chat_api_address = "代理地址"` 
 
