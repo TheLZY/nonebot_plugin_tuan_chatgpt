@@ -199,7 +199,8 @@ messagebox = MessageBox()
 
 # ref: LittlePaimon
 # https://github.com/CMHopeSunshine/LittlePaimon
-class FreqLimiter:
+
+class TuanFreqLimiter:
     """
     频率限制器（冷却时间限制器）
     """
@@ -234,7 +235,7 @@ class FreqLimiter:
         """
         return int(self.next_time[key] - time.time()) + 1
 
-freq_limiter = FreqLimiter()
+tuan_freq_limiter = TuanFreqLimiter()
 
 
 # Get cyber position
@@ -243,7 +244,7 @@ freq_limiter = FreqLimiter()
 async def get_cyber_pos(use_proxy: bool = False, proxies: dict = None):
     async with aiohttp.ClientSession() as session:
         url = 'https://ipapi.co/json/'
-        # 优先使用http。与openai 协程查询逻辑相同。
+        # 优先使用https。与openai 协程查询逻辑相同。
         if use_proxy:
             if "https" in proxies.keys():
                 proxy_check = proxies['https']

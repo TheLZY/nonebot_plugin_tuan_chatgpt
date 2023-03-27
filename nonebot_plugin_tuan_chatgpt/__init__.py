@@ -72,19 +72,16 @@ message_list_user = []
 
 @chat_service.handle()
 async def main_chat(event: MessageEvent):
-    global freq_limiter
+    global tuan_freq_limiter
     global messagebox
     global message_list_user
 
     # Check cd
-    if isinstance(event, GroupMessageEvent):
-        if not freq_limiter.check(f'chat-group{event.group_id}'):
-            await chat_service.finish(f'你们说话太快啦! {freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
-        elif not freq_limiter.check(f'chat-group{event.group_id}-{event.user_id}'):
-            await chat_service.finish(f'你说话太快啦! {freq_limiter.left(f"chat-group{event.user_id}")}秒之后再理你！')
-    elif isinstance(event, PrivateMessageEvent):
-        if not freq_limiter.check(f'chat-user{event.user_id}'):
-            await chat_service.finish(f'你说话太快啦! {freq_limiter.left(f"chat-user{event.user_id}")}秒之后再理你！')
+    if not tuan_freq_limiter.check(f'chat-user{event.user_id}'):
+        await chat_service.finish(f'你说话太快啦! { tuan_freq_limiter.left(f"chat-user{event.user_id}") }秒之后再理你！')
+    if not tuan_freq_limiter.check(f'chat-group{event.group_id}'):
+        await chat_service.finish(f'你们说话太快啦! {tuan_freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
+
 
     # 可以不保留前面的团子两个字
     # conversation = str(event.get_message())[2:]
@@ -131,12 +128,9 @@ async def main_chat(event: MessageEvent):
     answer_add = limit_conversation_size(answer, config.answer_max_size)
     message_list_user = add_conversation(answer_add, message_list_user, 'assistant')
 
-    # 限制聊天频率 判断是群聊还是私聊
-    if isinstance(event, GroupMessageEvent):
-        freq_limiter.start(f'chat-group{event.group_id}', config.user_freq_lim)
-        freq_limiter.start(f'chat-group{event.group_id}-{event.user_id}', config.group_freq_lim)
-    elif isinstance(event, PrivateMessageEvent):
-        freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
+    # 限制聊天频率
+    tuan_freq_limiter.start(f'chat-group{event.group_id}', config.group_freq_lim)
+    tuan_freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
 
     # Length division for answer
     # 避免腾讯风控。
@@ -151,8 +145,9 @@ async def main_chat(event: MessageEvent):
         answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
         for i in answer_segments[:3]:
             # Use sleep to avoid Tencent risk management
-            await chat_service.send(i)
             await asyncio.sleep(1)
+            await chat_service.send(i)
+
    
 
 # 调试用。输出最近的几个问题
