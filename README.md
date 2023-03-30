@@ -10,7 +10,7 @@
 
 _✨ 来和团子一起聊天吧~ ✨_ 
 
-CN | EN
+CN | [EN](https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt/blob/master/README_EN.md)
 
 
 <a href="https://cdn.jsdelivr.net/gh/TheLZY/nonebot_plugin_tuan_chatgpt@master/LICENSE.md">
