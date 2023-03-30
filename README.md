@@ -8,7 +8,9 @@
 
 # nonebot-plugin-tuan-chatgpt
 
-_✨ 来和团子一起聊天吧~ ✨_
+_✨ 来和团子一起聊天吧~ ✨_ 
+
+CN | EN
 
 
 <a href="https://cdn.jsdelivr.net/gh/TheLZY/nonebot_plugin_tuan_chatgpt@master/LICENSE.md">
