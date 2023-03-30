@@ -79,8 +79,9 @@ async def main_chat(event: MessageEvent):
     # Check cd
     if not tuan_freq_limiter.check(f'chat-user{event.user_id}'):
         await chat_service.finish(f'你说话太快啦! { tuan_freq_limiter.left(f"chat-user{event.user_id}") }秒之后再理你！')
-    if not tuan_freq_limiter.check(f'chat-group{event.group_id}'):
-        await chat_service.finish(f'你们说话太快啦! {tuan_freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
+    if isinstance(event, GroupMessageEvent):
+        if not tuan_freq_limiter.check(f'chat-group{event.group_id}'):
+            await chat_service.finish(f'你们说话太快啦! {tuan_freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
 
 
     # 可以不保留前面的团子两个字
@@ -129,7 +130,8 @@ async def main_chat(event: MessageEvent):
     message_list_user = add_conversation(answer_add, message_list_user, 'assistant')
 
     # 限制聊天频率
-    tuan_freq_limiter.start(f'chat-group{event.group_id}', config.group_freq_lim)
+    if isinstance(event, GroupMessageEvent):
+        tuan_freq_limiter.start(f'chat-group{event.group_id}', config.group_freq_lim)
     tuan_freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
 
     # Length division for answer
