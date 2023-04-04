@@ -52,7 +52,7 @@ CN | [EN](https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt/blob/master/READ
 举个栗子 🌰：
 
 <!--  ![聊天效果](example2.png)  -->
-![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/example2.png)
+![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/examples/example2.png)
 
 
 ## 🎉 使用
@@ -119,7 +119,7 @@ pip install nonebot-plugin-tuan-chatgpt
 
 如果希望启用代理，则需要在`.env` 文件中，写入 `chat_use_proxy = True` 以及 `chat_proxy_address_https = "代理地址"` 或 `chat_proxy_address_http = "代理地址"`  (处理逻辑类似openai，优先使用https。但是https经常会报错（aiohttp和urllib3都可能会造成问题），推荐只使用http)
 
-如果希望启用api转发 (类似 [腾讯云函数搭建 OpenAI 国内代理](https://github.com/Ice-Hazymoon/openai-scf-proxy) 通过云函数等方式转发消息 )，则需要写入写入 `chat_use_api_forward = True` 以及 `chat_api_address = "代理地址"` 
+如果希望启用api转发 (类似 [腾讯云函数搭建 OpenAI 国内代理](https://github.com/Ice-Hazymoon/openai-scf-proxy) 通过云函数等方式实现反代 )，则需要写入写入 `chat_use_api_forward = True` 以及 `chat_api_address = "代理地址"` 
 
 但是不推荐两者同时启用
 
@@ -201,13 +201,12 @@ eg：
 
 图片渲染
 
- ![聊天效果](examples/example_img2text.PNG)
+ ![图片渲染效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/examples/example_img2text.PNG)
  
 历史记录
 
- ![历史记录](examples/example_history.png) 
+ ![历史记录效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/examples/example_history.png) 
  
-
 
 
 ## 💡 TODO
@@ -239,6 +238,10 @@ eg：
 （正在思考怎么用聊天来添加人设 不过感觉要涉及的东西比较多
 
 ### 一些碎碎念
+
+<!-- 
+代码重构，符合OOC ？ 但是感觉复杂度并不高，可以，但没必要 -->
+
 <!-- 
 其实也可以是收到 @ ，然后没有别的程序被触发的时候就回复。因为paimon bot似乎会自动将nickname转义为 @ ？ -->
 
@@ -269,13 +272,13 @@ markdown 渲染好像有点复杂，还得再研究研究
 
 conversation_remember_num = 14
 
-![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/example3.png)
+![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/examples/example3.png)
 
 变成性冷淡机器人惹（悲）
 
 conversation_remember_num = 7
 
-![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/example4.png)
+![聊天效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/examples/example4.png)
 
 </details>
 
@@ -284,8 +287,7 @@ conversation_remember_num = 7
 
 <summary>Openai 抽风的例子</summary>
 
-![抽风效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/example_chou.png)
-
+![抽风效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/examples/example_chou.png)
 
 其中一个测试用例，大概三次里会抽一次, 有兴趣可以研究一下为什么抽风了（
 
