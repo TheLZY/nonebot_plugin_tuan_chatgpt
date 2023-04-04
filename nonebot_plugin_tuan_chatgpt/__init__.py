@@ -1,14 +1,16 @@
-from nonebot.adapters.onebot.v11 import MessageEvent, Message, GroupMessageEvent, PrivateMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, GroupMessageEvent, PrivateMessageEvent
+from nonebot.adapters.onebot.v11 import MessageSegment
 # from nonebot.adapters.telegram import Bot
 # from nonebot.adapters.telegram.event import MessageEvent
 from nonebot import on_command, on_message
 from nonebot.plugin import PluginMetadata
-from nonebot.params import RawCommand
+# from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
 from nonebot.log import logger
 
 from .utils import *
 from .config import config
+from .text_to_img import text2img_main
 import openai
 
 import asyncio
@@ -55,6 +57,10 @@ if config.chat_use_proxy:
         logger.error("请检查 tuan-chatgpt 代理地址")
     openai.proxy = proxy
 
+# 初始化路径
+path_init()
+
+
 
 async def chat_checker(event: MessageEvent) -> bool:
     # 检查 是否以团子开头 / to_me. 可能会造成一点性能问题
@@ -71,17 +77,17 @@ message_list_user = []
 
 
 @chat_service.handle()
-async def main_chat(event: MessageEvent):
+async def main_chat(bot: Bot, event: MessageEvent):
     global tuan_freq_limiter
     global messagebox
     global message_list_user
 
-    # Check cd
-    if not tuan_freq_limiter.check(f'chat-user{event.user_id}'):
-        await chat_service.finish(f'你说话太快啦! { tuan_freq_limiter.left(f"chat-user{event.user_id}") }秒之后再理你！')
-    if isinstance(event, GroupMessageEvent):
-        if not tuan_freq_limiter.check(f'chat-group{event.group_id}'):
-            await chat_service.finish(f'你们说话太快啦! {tuan_freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
+    # # Check cd
+    # if not tuan_freq_limiter.check(f'chat-user{event.user_id}'):
+    #     await chat_service.finish(f'你说话太快啦! { tuan_freq_limiter.left(f"chat-user{event.user_id}") }秒之后再理你！')
+    # if isinstance(event, GroupMessageEvent):
+    #     if not tuan_freq_limiter.check(f'chat-group{event.group_id}'):
+    #         await chat_service.finish(f'你们说话太快啦! {tuan_freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
 
 
     # 可以不保留前面的团子两个字
@@ -129,10 +135,10 @@ async def main_chat(event: MessageEvent):
     answer_add = limit_conversation_size(answer, config.answer_max_size)
     message_list_user = add_conversation(answer_add, message_list_user, 'assistant')
 
-    # 限制聊天频率
-    if isinstance(event, GroupMessageEvent):
-        tuan_freq_limiter.start(f'chat-group{event.group_id}', config.group_freq_lim)
-    tuan_freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
+    # # 限制聊天频率
+    # if isinstance(event, GroupMessageEvent):
+    #     tuan_freq_limiter.start(f'chat-group{event.group_id}', config.group_freq_lim)
+    # tuan_freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
 
     # Length division for answer
     # 避免腾讯风控。
@@ -141,16 +147,24 @@ async def main_chat(event: MessageEvent):
     if len(answer) < config.answer_split_size:
         await chat_service.finish(answer)
 
-    # 偶尔会发癫 暂时考虑先发前3条
-    # 剩下的可以使用消息转发
+    # 开启图片渲染时：
+    # 2条以内 直接发送
+    # 否则 只发送前3条
     else:
-        answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
-        for i in answer_segments[:3]:
-            # Use sleep to avoid Tencent risk management
-            await asyncio.sleep(1)
-            await chat_service.send(i)
-
-   
+        if config.chat_use_img2text:
+            try:
+                img = await text2img_main(text = answer)
+            except Exception as e:
+                logger.error(f"渲染图片时出错，报错 {e}")
+                error_message = generate_error_message(e = e)
+                await chat_service.finish(error_message)
+            await chat_service.send(img)
+        else:
+            answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
+            for i in answer_segments[:3]:
+                # Use sleep to avoid Tencent risk management
+                await asyncio.sleep(1)
+                await chat_service.send(i)
 
 # 调试用。输出最近的几个问题
 

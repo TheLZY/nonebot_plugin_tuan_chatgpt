@@ -1,7 +1,6 @@
 import tiktoken
 import openai
 
-# Freq limiter
 from collections import defaultdict
 import time
 import aiohttp
@@ -12,7 +11,11 @@ import random
 import random
 from collections import OrderedDict # defaultdict
 from typing import List, Dict
+from .config import config
 
+import os
+# import shutil
+import pathlib
 
 ####################################################################
 #                          Openai  有关                            #
@@ -76,8 +79,8 @@ def check_message_length(message_list, conversation_remember_num) -> list :
 # 主要的聊天函数
 async def chat(message_list):
     retries = 0
-    last_exception = None
-    while retries < 3:  # 如果失败 自动重试3次 否则raise 最后一次错误
+    last_exception = 'Failed'
+    while retries < 3:  # 如果失败 自动重试3次 否则raise 最后一次错误 但是好像有问题，有时候不会有这个raise
         try:
             response = await openai.ChatCompletion.acreate(
                 model = "gpt-3.5-turbo-0301",   # 最新的模型抽风了好几次 怕了怕了
@@ -101,7 +104,7 @@ async def chat(message_list):
             retries += 1
             last_exception = e
             logger.error(f'第 {retries} 次请求openai api 发生错误，报错信息为{e}')
-            await asyncio.sleep(1)  # 暂停一秒钟后重试
+        # await asyncio.sleep(1)  # 暂停一秒钟后重试 没必要暂停
     raise last_exception
 
 
@@ -192,10 +195,56 @@ class MessageBox:
 
 messagebox = MessageBox()
 
+
+####################################################################
+#                            团子 有关                              #
+####################################################################
+
+# Get cyber position
+# aka. Check the avaliability of proxy
+
+async def get_cyber_pos(use_proxy: bool = False, proxies: dict = None):
+    async with aiohttp.ClientSession() as session:
+        url = 'https://ipapi.co/json/'
+        # 优先使用https。与openai 协程查询逻辑相同。
+        if use_proxy:
+            if "https" in proxies.keys():
+                proxy_check = proxies['https']
+            else:
+                proxy_check = list(proxies.values())[0]
+        else:
+            proxy_check = None
+        async with session.get(url, proxy = proxy_check) as response:
+            resp_json = await response.json()
+            # print(response)
+            return resp_json["country_name"]
+
+
+
+def generate_error_message(e)  -> str:
+    '''
+    根据错误信息 产生错误消息
+    '''
+    
+    if str(e) == "Error communicating with OpenAI":
+        e = "梯子又出问题了！"
+
+    if len(str(e)) > 50:
+        e = str(e)[:50]
+
+    error_message_list = [
+        f'听不清喵，你说啥了喵 \n对了，我会识字了喵！你看，这个念 {e}喵',
+        f'团子被玩兒壞了！這肯定不是团子的問題！絕對不是！要怪就怪{e} ！',
+        f'（无感情声线） 报错 {e}'
+    ]
+
+    error_message = random.choice(error_message_list)
+    return error_message
+
+    
 ####################################################################
 #                          Nonebot 有关                            #
 ####################################################################
-
 
 # ref: LittlePaimon
 # https://github.com/CMHopeSunshine/LittlePaimon
@@ -238,43 +287,40 @@ class TuanFreqLimiter:
 tuan_freq_limiter = TuanFreqLimiter()
 
 
-# Get cyber position
-# aka. Check the avaliability of proxy
+# 路径初始化
+# font, background
+# 以后对于人设信息的动态添加应该也会保存在这里
 
-async def get_cyber_pos(use_proxy: bool = False, proxies: dict = None):
-    async with aiohttp.ClientSession() as session:
-        url = 'https://ipapi.co/json/'
-        # 优先使用https。与openai 协程查询逻辑相同。
-        if use_proxy:
-            if "https" in proxies.keys():
-                proxy_check = proxies['https']
-            else:
-                proxy_check = list(proxies.values())[0]
-        else:
-            proxy_check = None
-        async with session.get(url, proxy = proxy_check) as response:
-            resp_json = await response.json()
-            # print(response)
-            return resp_json["country_name"]
+def path_init(config = config):
+        
+    # data地址初始化
+    data_path = pathlib.Path.cwd()   # 使用bot的工作目录 （应该与 bot.py 相同）
+    if config.chat_data_path == 'data/tuan_chat':
+        data_path = os.path.join(data_path, config.chat_data_path)
+    else:
+        data_path = config.chat_data_path # 指定时使用绝对路径
+    if not os.path.exists(data_path):
+        os.mkdir(data_path)
+        logger.info(f"tuan_chat 创建目录 {data_path}")
 
+    # font 地址初始化
+    if config.chat_font_path == 'font':
+        fpath = os.path.join(data_path, 'font')
+    else:
+        fpath = config.chat_font_path
 
+    if not os.path.exists(fpath):
+        os.mkdir(fpath)
+        logger.info(f"tuan_chat 创建目录 {fpath}")
 
-def generate_error_message(e)  -> str:
-    '''
-    根据错误信息 产生错误消息
-    '''
+    # background 地址初始化
+    if config.chat_background_path == 'background':
+        fpath = os.path.join(data_path, 'background')
+    else:
+        fpath = os.path.join(config.chat_background_path)
+
+    if not os.path.exists(fpath):
+        os.mkdir(fpath)
+        logger.info(f"tuan_chat 创建目录 {fpath}")
+
     
-    if str(e) == "Error communicating with OpenAI":
-        e = "梯子又出问题了！"
-
-    if len(str(e)) > 50:
-        e = str(e)[:50]
-
-    error_message_list = [
-        f'呜呜呜，风好太，网好差，听不清，等风小了再试试嘛 \n对了，我刚才捡到张纸条，上面写了 {e}',
-        f'团子被玩兒壞了！這肯定不是团子的問題！絕對不是！要怪就怪{e} ！',
-        f'（无感情声线） 报错 {e}'
-    ]
-
-    error_message = random.choice(error_message_list)
-    return error_message
