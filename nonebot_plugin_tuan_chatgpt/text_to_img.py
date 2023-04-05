@@ -134,14 +134,14 @@ async def add_qr_code(image_origional, text)   ->  Image  :
     image_width, image_height = image_origional.size
     # qr_width, qr_height = qr_image.size
 
-    qr_image_resized = qr_image.resize((100,100))
+    qr_image_resized = qr_image.resize((140,140))
 
     # 创建一个新图片，尺寸为（原图宽度， 原图高度 + 200）
     combined_image = Image.new("RGBA", (image_width, image_height + 200), (255,255,255,0))
 
     # 将两张图片粘贴到新图片上
     combined_image.paste(image_origional, (0, 0), mask = image_origional)
-    combined_image.paste(qr_image_resized, (image_width - 150, image_height + 50 ))
+    combined_image.paste(qr_image_resized, (image_width - 170, image_height + 30 ))
     return combined_image
 
 
