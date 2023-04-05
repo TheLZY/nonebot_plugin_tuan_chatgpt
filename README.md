@@ -123,7 +123,9 @@ pip install nonebot-plugin-tuan-chatgpt
 
 但是不推荐两者同时启用
 
-如果希望启用图片渲染，则需要写入 `chat_use_img2text=True`, 以及在工程目录的 `/data` 文件夹（即 `bot.py` / `env` / `nb run` 的同级文件夹 ）中分别添加字体文件和背景文件到 `/font` 以及 `/bachground` 文件夹中。默认的字体文件可参考本仓库，背景文件则会从中随机抽取。文件夹不存在时会自动创建，也可自行设定文件夹路径。
+如果希望启用图片渲染，则需要写入 `chat_use_img2text=True`, 以及在工程目录的 `/data/tuan_chatgpt` 文件夹（`/data` 文件夹与 `bot.py` / `env` / 运行`nb run` 的地方同级 ）中分别添加字体文件和背景文件到 `/font` 以及 `/bachground` 文件夹中。
+默认的字体文件可参考本仓库，背景文件则会从中随机抽取。文件夹不存在时会自动创建，也可自行设定文件夹路径。
+也可以直接下载 Release 的 [tuan_chatgpt.zip](https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt/files/11163988/tuan_chatgpt.zip) 扔到 `/data` 里去
 
 图片渲染功能启用后，会自动启用二维码添加以及背景图片添加。可以选择关闭。
 
@@ -175,8 +177,8 @@ eg：
 | chat_use_img2text    | False                          | 是否渲染文本并发送图片          |
 | chat_use_qr          | True                           | 是否渲染文本并发送图片          |
 | chat_use_background  | True                           | 是否渲染文本并发送图片          |
-| chat_data_path       | 'data/tuan_chat'               | 数据路径                        |
-| chat_font_path       | 'font'                         | 字体路径（默认为data/tuan_chat/font）     |
+| chat_data_path       | 'data/tuan_chatgpt'               | 数据路径。修改用绝对路径                        |
+| chat_font_path       | 'font'                         | 字体路径（默认为data/tuan_chat/font     |
 | chat_background_path | "background"                   | 背景路径（默认为data/tuan_chat/background）|
 | chat_font_name       | 'sarasa-mono-sc-regular.ttf'   | 使用的字体                      |
 | chat_canvas_width    | 1000                           | 发送图片的宽度                   |

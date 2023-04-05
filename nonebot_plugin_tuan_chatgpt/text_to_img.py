@@ -11,8 +11,6 @@ import aiohttp
 # import asyncio
 # import imgkit
 
-
-
 import qrcode
 import unicodedata
 import random
@@ -220,8 +218,8 @@ def add_background_with_local_image(
     output_image = Image.new("RGB", (image_width, image_height), color=(255,255,255))
 
 
-    if new_height < image_width: # 缩放后的背景图更小：往下放置
-        output_image.paste(local_image_blurred, (0, image_height - new_height))
+    if new_height < image_height: # 缩放后的背景图更小：居中放置
+        output_image.paste(local_image_blurred, (0, 0.5 * (image_height - new_height)))
     else:
         output_image.paste(local_image_blurred)
 
