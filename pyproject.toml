@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot_plugin_tuan_chatgpt"
-version = "0.3.0"
+version = "0.3.1"
 description = "\"Chat with tuanzi ~\""
 authors = ["TheLZY"]
 license = "MIT"
