@@ -203,22 +203,37 @@ messagebox = MessageBox()
 # Get cyber position
 # aka. Check the avaliability of proxy
 
-async def get_cyber_pos(use_proxy: bool = False, proxies: dict = None):
+# 旧的方法，接收一个dict
+# async def get_cyber_pos(use_proxy: bool = False, proxies: dict = None):
+#     async with aiohttp.ClientSession() as session:
+#         url = 'https://ipapi.co/json/'
+#         # 优先使用https。与openai 协程查询逻辑相同。
+#         if use_proxy:
+#             if "https" in proxies.keys():
+#                 proxy_check = proxies['https']
+#             else:
+#                 proxy_check = list(proxies.values())[0]
+#         else:
+#             proxy_check = None
+#         async with session.get(url, proxy = proxy_check) as response:
+#             resp_json = await response.json()
+#             # print(response)
+#             return resp_json["country_name"]
+
+# 新的方法，因为使用了 config.chat_proxy_address_https / config.chat_proxy_address_http
+# 所以接受的可以是一个 str
+async def get_cyber_pos(use_proxy: bool = False, proxy: str = None):
     async with aiohttp.ClientSession() as session:
         url = 'https://ipapi.co/json/'
         # 优先使用https。与openai 协程查询逻辑相同。
         if use_proxy:
-            if "https" in proxies.keys():
-                proxy_check = proxies['https']
-            else:
-                proxy_check = list(proxies.values())[0]
+            proxy_check = proxy
         else:
             proxy_check = None
         async with session.get(url, proxy = proxy_check) as response:
             resp_json = await response.json()
             # print(response)
             return resp_json["country_name"]
-
 
 
 def generate_error_message(e)  -> str:

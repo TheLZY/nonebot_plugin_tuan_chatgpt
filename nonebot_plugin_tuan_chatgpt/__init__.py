@@ -82,12 +82,12 @@ async def main_chat(bot: Bot, event: MessageEvent):
     global messagebox
     global message_list_user
 
-    # # Check cd
-    # if not tuan_freq_limiter.check(f'chat-user{event.user_id}'):
-    #     await chat_service.finish(f'你说话太快啦! { tuan_freq_limiter.left(f"chat-user{event.user_id}") }秒之后再理你！')
-    # if isinstance(event, GroupMessageEvent):
-    #     if not tuan_freq_limiter.check(f'chat-group{event.group_id}'):
-    #         await chat_service.finish(f'你们说话太快啦! {tuan_freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
+    # Check cd
+    if not tuan_freq_limiter.check(f'chat-user{event.user_id}'):
+        await chat_service.finish(f'你说话太快啦! { tuan_freq_limiter.left(f"chat-user{event.user_id}") }秒之后再理你！')
+    if isinstance(event, GroupMessageEvent):
+        if not tuan_freq_limiter.check(f'chat-group{event.group_id}'):
+            await chat_service.finish(f'你们说话太快啦! {tuan_freq_limiter.left(f"chat-group{event.group_id}")}秒之后再理你们！')
 
 
     # 可以不保留前面的团子两个字
@@ -97,13 +97,14 @@ async def main_chat(bot: Bot, event: MessageEvent):
     # 没必要再写一个on command
     # 但是之后再来写@触发的时候估计要改
     if conversation == "团子看看位置":
+        proxy = None
         try:
             if config.chat_proxy_address_https:
-                proxy ={'https': config.chat_proxy_address_https}
+                proxy = config.chat_proxy_address_https
             elif config.chat_proxy_address_http:
-                proxy = {'http': config.chat_proxy_address_http}
+                proxy = config.chat_proxy_address_http
             else:
-                logger.error("请检查 tuan-chatgpt 代理地址")
+                logger.warning("请检查 tuan-chatgpt 代理地址")
 
             pos = await get_cyber_pos(config.chat_use_proxy, proxy)
         except Exception as e:
@@ -135,10 +136,10 @@ async def main_chat(bot: Bot, event: MessageEvent):
     answer_add = limit_conversation_size(answer, config.answer_max_size)
     message_list_user = add_conversation(answer_add, message_list_user, 'assistant')
 
-    # # 限制聊天频率
-    # if isinstance(event, GroupMessageEvent):
-    #     tuan_freq_limiter.start(f'chat-group{event.group_id}', config.group_freq_lim)
-    # tuan_freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
+    # 限制聊天频率
+    if isinstance(event, GroupMessageEvent):
+        tuan_freq_limiter.start(f'chat-group{event.group_id}', config.group_freq_lim)
+    tuan_freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
 
     # Length division for answer
     # 避免腾讯风控。

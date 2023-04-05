@@ -19,8 +19,9 @@ import random
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 from io import BytesIO
-import base64
+# import base64
 from nonebot.adapters.onebot.v11 import MessageSegment
+# from nonebot.adapters.telegram import MessageSegment
 from .perf_timer import PerfTimer
 from typing import Union
 from pathlib import Path
