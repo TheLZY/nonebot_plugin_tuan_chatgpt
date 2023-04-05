@@ -16,7 +16,7 @@ class Config(BaseModel, extra=Extra.ignore):
     chat_use_api_forward: bool = False    # Use api forward or not. If it's true, the api address must be specified.
     chat_api_address: str = None
     # 图片转文字有关
-    chat_data_path: str = 'data/tuan_chat'    # data path
+    chat_data_path: str = 'data/tuan_chatgpt'    # data path
     chat_use_img2text: bool = False    # Render text and send images
     chat_font_path: str = 'font'  # path of chat. 未指定时默认使用 data/font
     chat_font_name: str = 'sarasa-mono-sc-regular.ttf'      # 启用的

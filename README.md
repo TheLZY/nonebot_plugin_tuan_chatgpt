@@ -202,11 +202,11 @@ eg：
 图片渲染
 
  ![图片渲染效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/examples/example_img2text.PNG)
- 
+
 历史记录
 
  ![历史记录效果](https://raw.githubusercontent.com/TheLZY/nonebot_plugin_tuan_chatgpt/master/examples/example_history.png) 
- 
+
 
 
 ## 💡 TODO
