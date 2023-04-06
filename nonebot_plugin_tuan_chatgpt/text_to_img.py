@@ -19,7 +19,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from io import BytesIO
 # import base64
 from nonebot.adapters.onebot.v11 import MessageSegment
-# from nonebot.adapters.telegram import MessageSegment
+# 对于 telegram adapter，发送图片时使用File.photo()
+# from nonebot.adapters.telegram.message import File
 from .perf_timer import PerfTimer
 from typing import Union
 from pathlib import Path
@@ -218,8 +219,8 @@ def add_background_with_local_image(
     output_image = Image.new("RGB", (image_width, image_height), color=(255,255,255))
 
 
-    if new_height < image_height: # 缩放后的背景图更小：居中放置
-        output_image.paste(local_image_blurred, (0, 0.5 * (image_height - new_height)))
+    if new_height < image_height: # 缩放后的背景图更小：居中放置 
+        output_image.paste(local_image_blurred, (0, (image_height - new_height) //2 ))
     else:
         output_image.paste(local_image_blurred)
 

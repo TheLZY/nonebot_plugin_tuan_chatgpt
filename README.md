@@ -177,8 +177,8 @@ eg：
 | chat_use_img2text    | False                          | 是否渲染文本并发送图片          |
 | chat_use_qr          | True                           | 是否渲染文本并发送图片          |
 | chat_use_background  | True                           | 是否渲染文本并发送图片          |
-| chat_data_path       | 'data/tuan_chatgpt'               | 数据路径。修改用绝对路径                        |
-| chat_font_path       | 'font'                         | 字体路径（默认为data/tuan_chat/font     |
+| chat_data_path       | 'data/tuan_chatgpt'            | 数据路径。修改请用绝对路径              |
+| chat_font_path       | 'font'                         | 字体路径（默认为data/tuan_chat/font)     |
 | chat_background_path | "background"                   | 背景路径（默认为data/tuan_chat/background）|
 | chat_font_name       | 'sarasa-mono-sc-regular.ttf'   | 使用的字体                      |
 | chat_canvas_width    | 1000                           | 发送图片的宽度                   |
