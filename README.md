@@ -58,13 +58,21 @@ CN | [EN](https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt/blob/master/READ
 ## 🎉 使用
 
 ### 指令表
+注意：指令中的团子根据设置的nickname为准。也可以通过 @团子 代替。
+
+现在没有默认触发词了，如果没有设置nickname，就只能通过 @ 触发了
+
+指令的相同触发词可自行查看代码中 aliases 部分。
+
+
 
 | 指令 | 权限 | 需要@ | 范围 | 说明 |
 |:-----:|:----:|:----:|:----:|:----:|
 | 团子[聊天内容] | 群员 | 否 | 群聊 / 私聊 | 来和团子聊天吧！ |
 | @团子[聊天内容] | 同上 |  是 | 同上 | 同上 |
-| 团子看看位置 | 群员 | 否 | 群聊 / 私聊 | 查看团子赛博地址 |
-| 历史记录 | 主人 | 否 | 群聊 / 私聊 | 查看历史提问（不包括回答） |
+| 团子 看看位置 / 你在哪儿 | 群员 | 否 | 群聊 / 私聊 | 查看团子赛博地址 |
+| 团子 历史记录 / history | 主人 | 否 | 群聊 / 私聊 | 查看历史提问（不包括回答） |
+| 团子 清除记忆 / 清除历史记录 | 主人 | 否 | 群聊 / 私聊 | 清除团子的记忆 |
 
 
 
@@ -77,6 +85,9 @@ CN | [EN](https://github.com/TheLZY/nonebot_plugin_tuan_chatgpt/blob/master/READ
 
 ```
 nb plugin install nonebot-plugin-tuan-chatgpt
+
+# 升级：
+nb plugin update nonebot-plugin-tuan-chatgpt
 ```
 
 </details>
@@ -84,10 +95,7 @@ nb plugin install nonebot-plugin-tuan-chatgpt
 
 <details>
 
-<summary>使用 git 安装 （ 推荐 ）</summary>
-
-
-推荐此方式，因为能够及时收到更新
+<summary>使用 git 安装 </summary>
 
 安装：在 nonebot2 项目的插件目录下, 打开命令行, 使用 git 安装
 
@@ -115,7 +123,7 @@ pip install nonebot-plugin-tuan-chatgpt
 
 环境配置：
 
-打开nonebot的`.env` 文件，写入您的 `chatgpt_api`
+打开nonebot的`.env` 文件，写入您的 `chatgpt_api` 以及 `nickname`
 
 如果希望启用代理，则需要在`.env` 文件中，写入 `chat_use_proxy = True` 以及 `chat_proxy_address_https = "代理地址"` 或 `chat_proxy_address_http = "代理地址"`  (处理逻辑类似openai，优先使用https。但是https经常会报错（aiohttp和urllib3都可能会造成问题），推荐只使用http)
 
@@ -134,6 +142,7 @@ pip install nonebot-plugin-tuan-chatgpt
 eg： 
 
     chatgpt_api = "sk-1145141919"
+    nickname = ['团子', '雷姆']
     # 启用代理
     chat_use_proxy=True
     chat_proxy_address_http='http://127.0.0.1:10809'
@@ -162,6 +171,9 @@ eg：
 | 配置项               | 默认值 | 说明           |
 | :-----------------: | :----: | :------------: |
 | chatgpt_api         |   无   | str格式         |
+| nickname         |   无   | list[str]         |
+
+ps. 这个nickname是bot通用的。即，别的插件也能获取这个参数，不过一般不会有啥影响。
 
 代理相关（可选）：
 | 配置项                   | 默认值 | 说明                 |
@@ -213,6 +225,7 @@ eg：
 
 ## 💡 TODO
 
+- [x] 分群记忆（每个群以及私聊，记忆不会串）
 - [x] 回答分隔 （通过分段实现。可能会考虑换成图片发送）
 - [x] 支持使用代理
 - [x] 增加代理测试 通过返回的ip地址判断代理是否有效 绝赞赛博旅行中！  <!--  http://icanhazip.com/ --> 
@@ -223,19 +236,17 @@ eg：
 - [x] 通过@触发 
 - [ ] 修改人设 ？ 
 - [ ] markdown 渲染 ？ 
-- [ ] ~~自定义触发方式？ 这个倒是可以和修改触发人设一起联动...不过感觉动态修改有点麻烦。~~ 在nickname里面加吧，也挺好
+- [x] ~~自定义触发方式？ 这个倒是可以和修改触发人设一起联动...不过感觉动态修改有点麻烦。~~ 在nickname里面加吧。还是不造轮子了。
 - [ ] ~~Openai 抽风处理（暂时只输出 3*177 个长度的回答 可以根据相同字数出现次数来 同一个字连续出现6次判定为抽风？）~~ 最近没遇到 鉴定为不瞎改就不会有问题
 - [ ] ~~长回答合并转发~~ 似乎更容易被风控 算了。 [参考](https://github.com/Ailitonia/omega-miya/issues/16#issuecomment-827432967)
 
-<!-- - [ ] 全局变量似乎有数据不一致的问题 是否需要加锁？ 毕竟只是一个小小的列表 就算出现一点顺序错误也无伤大雅 --> 
+<!-- - [ ] 全局变量似乎有数据不一致的问题 是否需要加锁？ 毕竟只是一个小小的字典 就算出现一点顺序错误也无伤大雅 --> 
 
 **角色 ~~调教~~ 定制：**
 
-如果希望更改触发语，可以找到源码安装位置里的 `__init__.py` 文件，修改 `chat_checker`
+如果希望更改触发语，可以进入 nonebot 的`.env` 文件，在 `nickname` 里添加触发语
 
-也可以进入 nonebot 的`.env` 文件，在 `nickname` 里添加触发语
-
-如果希望更改人设，可以修改 `utils.py` 文件中的 `MessageBox`
+如果希望更改人设，可以修改 `utils.py` 文件中的 `MessageBox` 中的 `charactor` 相关部分
 
 （正在思考怎么用聊天来添加人设 不过感觉要涉及的东西比较多
 
@@ -315,6 +326,10 @@ answer = response.choices[0].message.content
 
 ## 📆 History
 
+**2023.5.13**
+
+- 支持分群记忆
+- 增加清除记忆功能
 
 **2023.4.4**
 

@@ -1,5 +1,6 @@
 from nonebot import get_driver
 from pydantic import BaseModel, Extra
+from typing import Union, Set
 
 class Config(BaseModel, extra=Extra.ignore):
     chatgpt_api: str = None
@@ -9,6 +10,7 @@ class Config(BaseModel, extra=Extra.ignore):
     user_freq_lim: int = 4           # Limit the speaking speed of group members. (second)
     group_freq_lim: int = 6          # Limit the speaking speed in a group. 
     conversation_remember_num: int = 7    # The number of conversation that is remembered. 7 means she can remember 4 conversation from user. （太大了会忘记）
+    reply_at_message: bool = False    # To be implemented.
     # 代理有关
     chat_use_proxy: bool = False     # Use proxy or not. In fact it's not needed. Just to remind everyone this function exists.
     chat_proxy_address_http: str = None
@@ -29,3 +31,10 @@ class Config(BaseModel, extra=Extra.ignore):
     chat_background_path: str = "background"  # path of background. 未指定时默认使用 data/background
 
 config = Config.parse_obj(get_driver().config)
+
+try:
+    NICKNAME: str = list(get_driver().config.nickname)[-1]
+    init_name = NICKNAME
+except Exception:
+    init_name = None
+    NICKNAME = '团子'

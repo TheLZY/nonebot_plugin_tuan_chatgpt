@@ -9,13 +9,14 @@ from nonebot.log import logger
 import random
 
 import random
-from collections import OrderedDict # defaultdict
-from typing import List, Dict
-from .config import config
+from collections import OrderedDict, defaultdict
+from typing import List, Dict, Union
+from .config import config, NICKNAME
 
 import os
 # import shutil
 import pathlib
+import re
 
 ####################################################################
 #                          Openai  有关                            #
@@ -48,7 +49,7 @@ def num_tokens_from_messages(message_list, model="gpt-3.5-turbo-0301"):
 # 为了维持人设，必须把这样的词删掉
 wake_up_word = ["AI","助手","人工智能","语言模型","程序","预训练","虚构","角色","扮演","模拟","模仿","虚拟"]
 
-def add_conversation(conversation: str, message_list : list, role: str = "user",):
+def add_conversation(conversation: str, message_list : list, role: str = "user"):
     if role == "assistant":
         if any(item in conversation for item in wake_up_word):
             return message_list
@@ -74,7 +75,6 @@ def check_message_length(message_list, conversation_remember_num) -> list :
             logger.error(f'check_message_length 发生错误 {e}')
     return message_list
         # messages
-
 
 # 主要的聊天函数
 async def chat(message_list):
@@ -115,31 +115,39 @@ async def chat(message_list):
 # Ref：https://dreamkaka.github.io/posts/e4a3608d.html
 class MessageBox:
     '''
-    message的init, 即人设
+    message 的 处理, 即人设 charactor + 聊天记录 history
     也可以作为以后添加人设使用
     人设可以存储在本地 作为 json 或者普通的字符串
     但是assistant怎么处理？load进自定义人格的时候再说吧。
-    初始化的时候需要用他的回答吗？
     '''
-    def __init__(self) -> None:
+    def __init__(self):
         self.charactor_messages = OrderedDict()
         self.charactor_prob = []
         self.hp = 5
 
         self.default_charactor_loader()
         self.use_charactor = self.charactor_list[0]
+        self.history = defaultdict(list)  # 不能用None，也不能用''. 因为之后要和 charactor 里的 list 相加
 
-    def get_messages(self, charactor_type: str = None) -> List[Dict[str, str]]:
+    def get_messages(self, id, charactor_type: str = None) -> List[Dict[str, str]]:
         '''
-        输出人格对应的messages
+        输出messages (人设 charactor + 聊天记录 history )
         可以指定。
         '''
         if not charactor_type:
             charactor_type = self.use_charactor
             self.use_charactor_step()
         
-        return self.charactor_messages.get(charactor_type, [])
+        whole_message = self.charactor_messages.get(charactor_type, []) + self.history.get(id,[])
 
+        return whole_message
+    
+    def get_history(self, id) -> List[Dict[str, str]]:
+        '''
+        输出聊天历史
+        '''
+        return self.history[id]
+    
     def default_charactor_loader(self):
         default_charactor_list = ['tuanzi','neko','cute_neko','cthulhu','paimon']
         default_charactor_prob = [10,2,3,1,1]
@@ -195,6 +203,35 @@ class MessageBox:
         '''
         pass
 
+    def clean(self, id: str = None):
+        '''
+        To Do.
+        Clean Chat History based on id.
+        '''
+        self.history[id] = []
+
+    def add(self, conversation: str, role: str = "user", id: str = None):
+        '''
+        Add conversation to the history.
+        '''
+        if role != "assistant" or not any(item in conversation for item in wake_up_word):
+            self.history[id].append({"role": role, "content": conversation})
+        self.history[id] = check_message_length(message_list = self.history[id], conversation_remember_num = config.conversation_remember_num)
+
+    def delete_fail(self, id: str = None):
+        '''
+        If one conversation failed, pop it out of history list
+        '''
+        try:
+            self.history[id].pop()
+        except Exception as e:
+            logger.error(f'对 {self.history[id]} 进行pop操作时发生错误，报错信息为 {e}')
+            # raise e
+
+
+        
+
+
 messagebox = MessageBox()
 
 
@@ -245,6 +282,8 @@ def generate_error_message(e)  -> str:
     
     if str(e) == "Error communicating with OpenAI":
         e = "梯子又出问题了！"
+    if "rate limit" in str(e):
+        e = "Openai都觉得你们说话太快啦！"
 
     if len(str(e)) > 150:
         e = str(e)[:150]
@@ -253,17 +292,51 @@ def generate_error_message(e)  -> str:
 
     error_message_list = [
         f'听不清喵，你说啥了喵 \n总之就是 {e}喵',
-        f'团子被玩兒壞了！這肯定不是团子的問題！絕對不是！都怪{e} ！',
-        f'（无感情声线） 报错 {e}'
+        f'{NICKNAME}被玩兒壞了！這肯定不是{NICKNAME}的問題！絕對不是！都怪{e} ！',
+        # f'（无感情声线） 报错 {e}'
     ]
 
     error_message = random.choice(error_message_list)
     return error_message
 
-    
+
+def conversation_preprocessing(conversation: str) -> Union[bool,str]:
+    '''
+    消息的预处理：
+    如果只是单纯的引用 reply，并没有 @ ，那大部分都只是对团子发送的来自其他插件的图片的吐槽，这时候不回应
+    如果是通过at触发的，则用正则表达式去掉这一部分
+    注意：引用的时候，即使没有 @，也会自带一个@ 
+    (即：标准的没有@的引用开头：[CQ:reply,id=123456][CQ:at,qq=123456])
+    其实可以把引用的内容拉进去。但是感觉很麻烦。
+    不过似乎openai不会管[]里面的内容？ 那就这样也没啥大问题
+
+    '''
+    if 'CQ:reply' in conversation and conversation.count('CQ:at') == 1:
+        conversation = None
+    conversation = re.sub(r'\[CQ:reply,id=.*?\] ', '', conversation)
+    conversation = re.sub(r'\[CQ:at,qq=\d*\] ', '', conversation)
+    conversation = re.sub(r'\[CQ:at,qq=\d*\] ', '', conversation)
+    return conversation
+
+
 ####################################################################
 #                          Nonebot 有关                            #
 ####################################################################
+
+def start_checker(str_to_check: str, target: Union[str, List[str]] ) -> Union[bool, str]:
+    if isinstance(target,str):
+        if str_to_check.startswith(target):
+            return target
+        else:
+            return False
+        
+    elif isinstance(target,list):
+        for s in target:
+            if str_to_check.startswith(s):
+                return s
+        else:
+            return False
+
 
 # ref: LittlePaimon
 # https://github.com/CMHopeSunshine/LittlePaimon
