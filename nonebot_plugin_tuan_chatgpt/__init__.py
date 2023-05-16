@@ -16,6 +16,7 @@ import openai
 
 import asyncio
 import re
+import random
 
 __plugin_meta__ = PluginMetadata(
     name='团子聊天',
@@ -200,8 +201,14 @@ async def clean_history(event: MessageEvent):
         chat_id = f'chat-user{event.user_id}'
 
     messagebox.clean(id = chat_id)
+
+    clean_message_list = [f'清除成功啦~ 快来和{NICKNAME}聊天吧~',
+                          f'已经全忘惹~ 快来和{NICKNAME}聊天吧~',
+                          f'发生什么事啦？ 唔，总之，来和{NICKNAME}聊天吧~',
+                          f'{NICKNAME}已经什么都不记得啦~ 快来和我聊天吧~']
+    clean_message = random.choice(clean_message_list)
     
-    await clean_history.finish(f'成功清除记忆~ 快来和{NICKNAME}聊天吧~')
+    await chat_service_clean.finish( clean_message)
 
 @chat_service_position.handle()
 async def check_position(event: MessageEvent):
