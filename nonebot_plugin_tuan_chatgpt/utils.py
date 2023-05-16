@@ -1,4 +1,4 @@
-image.pngimport tiktoken
+import tiktoken
 import openai
 
 from collections import defaultdict
