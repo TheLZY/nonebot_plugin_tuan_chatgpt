@@ -208,7 +208,7 @@ async def clean_history(event: MessageEvent):
                           f'{NICKNAME}已经什么都不记得啦~ 快来和我聊天吧~']
     clean_message = random.choice(clean_message_list)
     
-    await chat_service_clean.finish( clean_message)
+    await chat_service_clean.finish(clean_message)
 
 @chat_service_position.handle()
 async def check_position(event: MessageEvent):
