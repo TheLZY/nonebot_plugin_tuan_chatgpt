@@ -111,7 +111,7 @@ git pull
 
 <details>
 <summary>使用 pip 安装</summary>
-
+如果是创建了虚拟环境的记得先激活，路径一般在.venv里面
 
 ```
 pip install nonebot-plugin-tuan-chatgpt

@@ -24,7 +24,7 @@ __plugin_meta__ = PluginMetadata(
     usage='团子[聊天内容]',
     extra={
         'author': 'TheLZY',
-        'version': '0.2',
+        'version': '0.4',
         'priority': 8,
         'configs': {
             '群冷却': 4,
@@ -82,14 +82,19 @@ async def main_chat(event: MessageEvent):
     global messagebox
 
     # Check cd
-    if not tuan_freq_limiter.check(f'chat-user{event.user_id}'):
-        await chat_service.finish(f'你说话太快啦! { tuan_freq_limiter.left(f"chat-user{event.user_id}") }秒之后再理你！')
+    # 对于群聊：使用group_id来限制发言频率
+    # 对于私聊：使用uer_id来限制发言频率
+    # 去掉回复功能，避免高频呼叫的高频回复
+
     if isinstance(event, GroupMessageEvent):
         chat_id = f"chat-group{event.group_id}"
-        if not tuan_freq_limiter.check(chat_id):
-            await chat_service.finish(f'你们说话太快啦! { tuan_freq_limiter.left(chat_id) }秒之后再理你们！')
     else:
-        chat_id = f'chat-user{event.user_id}'
+        chat_id = f"chat-user{event.user_id}"
+
+    if not tuan_freq_limiter.check(chat_id):
+            # await chat_service.finish(f'你们说话太快啦! { tuan_freq_limiter.left(chat_id) }秒之后再理你们！')
+            logger.info(f'{chat_id} 说话太快，此条消息被弃用')
+            await chat_service.finish()
 
     conversation = str(event.original_message)
 
@@ -125,10 +130,11 @@ async def main_chat(event: MessageEvent):
     messagebox.add(conversation = answer_add, role =  'assistant', id = chat_id)
 
     # 限制聊天频率
-    # 其实可以直接改成 id 的 不过因为分了group和user还是得弄一下
+    # 其实可以直接改成 id 的 不过因为分了群聊和私聊还是得弄一下
     if isinstance(event, GroupMessageEvent):
-        tuan_freq_limiter.start(f'chat-group{event.group_id}', config.group_freq_lim)
-    tuan_freq_limiter.start(f'chat-user{event.user_id}', config.user_freq_lim)
+        tuan_freq_limiter.start(f'chat-group{event.group_id}', config.chat_freq_lim)
+        # 都设置一个，也不是不行
+    tuan_freq_limiter.start(f'chat-user{event.user_id}', config.chat_freq_lim)
 
     # Length division for answer
     # 避免腾讯风控。
@@ -152,7 +158,7 @@ async def main_chat(event: MessageEvent):
         else:
             answer_segments = [answer[i:i + config.answer_split_size] for i in range(0, len(answer), config.answer_split_size)]
             for i in answer_segments[:3]:
-                # Use sleep to avoid Tencent risk management
+                # 避免说话太快被腾讯风控
                 await asyncio.sleep(1)
                 await chat_service.send(i)
 

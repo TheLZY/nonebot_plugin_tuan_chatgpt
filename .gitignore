@@ -1,6 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
+# By TheLZY
+参考.env
+
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

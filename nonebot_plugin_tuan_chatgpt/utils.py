@@ -24,13 +24,13 @@ import re
 
 
 # 计算 token 长度
-def num_tokens_from_messages(message_list, model="gpt-3.5-turbo-0301"):
+def num_tokens_from_messages(message_list, model="gpt-3.5-turbo"):
     """Returns the number of tokens used by a list of messages."""
     try:
         encoding = tiktoken.encoding_for_model(model)
     except KeyError:
         encoding = tiktoken.get_encoding("cl100k_base")
-    if model == "gpt-3.5-turbo-0301":  # note: future models may deviate from this
+    if model in ["gpt-3.5-turbo", "gpt-4"]:  # note: future models may deviate from this
         num_tokens = 0
         for message in message_list:
             num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
@@ -83,7 +83,7 @@ async def chat(message_list):
     while retries < 3:  # 如果失败 自动重试3次 否则raise 最后一次错误 但是好像有问题，有时候不会有这个raise
         try:
             response = await openai.ChatCompletion.acreate(
-                model = "gpt-3.5-turbo-0301",   # 最新的模型抽风了好几次 怕了怕了
+                model = "gpt-3.5-turbo",   # 最新的模型抽风了好几次 怕了怕了
                 messages = message_list,
                 # temperature = 0.5,
                 presence_penalty = - 0.8,
@@ -313,7 +313,7 @@ def conversation_preprocessing(conversation: str) -> Union[bool,str]:
     '''
     if 'CQ:reply' in conversation and conversation.count('CQ:at') == 1:
         conversation = None
-    conversation = re.sub(r'\[CQ:reply,id=.*?\] ', '', conversation)
+    conversation = re.sub(r'\[CQ:reply,id=.*?\]', '', conversation)
     conversation = re.sub(r'\[CQ:at,qq=\d*\] ', '', conversation)
     conversation = re.sub(r'\[CQ:at,qq=\d*\] ', '', conversation)
     return conversation
